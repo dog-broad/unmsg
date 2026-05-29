@@ -135,19 +135,23 @@ class FileRowDelegate(QStyledItemDelegate):
         if not chips:
             return right
         chip_font = QFont()
-        chip_font.setPointSizeF(8.0)
+        chip_font.setPointSizeF(8.5)
+        chip_font.setWeight(QFont.Weight.DemiBold)
         painter.setFont(chip_font)
         x = right
+        height = 20
         metrics = painter.fontMetrics()
+        fill = QColor(t.get("selection", t["surface"]))
+        text = QColor(t["accent"])
         for fmt in reversed(chips):
             label = _CHIP_LABEL.get(fmt, fmt)
-            w = metrics.horizontalAdvance(label) + 16
-            chip_rect = QRectF(x - w, rect.center().y() - 9, w, 18)
-            painter.setBrush(QColor(t["surface"]))
-            painter.setPen(QColor(t["border"]))
-            painter.drawRoundedRect(chip_rect, 2, 2)
-            painter.setPen(QColor(t["ink_muted"]))
-            painter.drawText(chip_rect, int(Qt.AlignmentFlag.AlignCenter), label)
+            w = metrics.horizontalAdvance(label) + 20
+            pill = QRectF(x - w, rect.center().y() - height / 2, w, height)
+            painter.setBrush(fill)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawRoundedRect(pill, height / 2, height / 2)  # full pill
+            painter.setPen(text)
+            painter.drawText(pill, int(Qt.AlignmentFlag.AlignCenter), label)
             x -= w + 6
         return x
 
