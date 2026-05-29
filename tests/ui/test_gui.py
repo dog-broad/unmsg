@@ -87,6 +87,24 @@ def test_conversion_completes_and_writes_output(
     assert win._phase == "done"
 
 
+def test_app_icon_loads(qtbot):
+    from pathlib import Path
+
+    from PySide6.QtGui import QIcon
+
+    from unmsg.ui.assets import app_icon_ico, app_icon_svg
+
+    assert Path(app_icon_svg()).is_file()
+    assert Path(app_icon_ico()).is_file()
+    assert not QIcon(app_icon_svg()).isNull()
+
+
+def test_window_has_icon(qtbot):
+    win = MainWindow(Config())
+    qtbot.addWidget(win)
+    assert not win.windowIcon().isNull()
+
+
 def test_log_level_and_redaction_applied(qtbot):
     import logging
 

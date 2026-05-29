@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
 from unmsg.config import Config, save_config
 from unmsg.core.models import ConvertResult
 from unmsg.logging_setup import LOGGER_NAME
+from unmsg.ui.assets import app_icon_svg
 from unmsg.ui.dialogs.error_details import ErrorDetailsDialog
 from unmsg.ui.dialogs.help import HelpDialog
 from unmsg.ui.dialogs.settings import SettingsDialog
@@ -58,6 +59,7 @@ class MainWindow(QMainWindow):
         )
 
         self.setWindowTitle("UnMsg")
+        self.setWindowIcon(QIcon(app_icon_svg()))
         self.resize(config.ui.window_width, config.ui.window_height)
 
         root = QWidget()

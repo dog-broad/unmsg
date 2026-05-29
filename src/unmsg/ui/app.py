@@ -8,18 +8,21 @@ from pathlib import Path
 
 def run() -> int:
     """Start the desktop application and return its exit code."""
+    from PySide6.QtGui import QIcon
     from PySide6.QtWidgets import QApplication
 
     from unmsg import paths
     from unmsg.config import load_config, save_config
     from unmsg.crash import install_excepthook
     from unmsg.logging_setup import setup_logging
+    from unmsg.ui.assets import app_icon_svg
     from unmsg.ui.dialogs.error_details import ErrorDetailsDialog
     from unmsg.ui.dialogs.first_run import FirstRunDialog
     from unmsg.ui.main_window import MainWindow
     from unmsg.ui.theme import apply_theme
 
     app = QApplication.instance() or QApplication(sys.argv)
+    app.setWindowIcon(QIcon(app_icon_svg()))
     config = load_config()
     setup_logging(level=config.logging.level, redact=config.logging.redact_pii)
     apply_theme(app, config.ui.theme)

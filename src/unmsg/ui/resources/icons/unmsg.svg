@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="56" fill="#2F6F4F"/>
+  <!-- the letter (clean text) emerging from the message -->
+  <rect x="80" y="52" width="96" height="92" rx="10" fill="#FFFFFF"/>
+  <rect x="96" y="74" width="64" height="9" rx="4.5" fill="#2F6F4F"/>
+  <rect x="96" y="92" width="64" height="9" rx="4.5" fill="#2F6F4F"/>
+  <rect x="96" y="110" width="42" height="9" rx="4.5" fill="#2F6F4F"/>
+  <!-- envelope body -->
+  <path d="M48 120 h160 a8 8 0 0 1 8 8 v60 a14 14 0 0 1 -14 14 h-148 a14 14 0 0 1 -14 -14 v-60 a8 8 0 0 1 8 -8 z" fill="#FFFFFF"/>
+  <!-- open flaps -->
+  <path d="M44 124 L128 178 L212 124" fill="none" stroke="#2F6F4F" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
