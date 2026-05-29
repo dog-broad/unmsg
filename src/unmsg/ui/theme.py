@@ -13,15 +13,16 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PySide6.QtWidgets import QApplication
 
-# Roles mirror the brand's named tokens. A cool grey window background against
-# white raised cards gives depth; `selection` is a faint accent tint.
+# Roles mirror the brand's named tokens. A clean near-white window over white
+# cards; depth comes from borders, a soft shadow on the drop zone, and the
+# selection tint — not a grey wash. `selection` is a faint accent tint.
 LIGHT: dict[str, str] = {
-    "surface": "#F1F2F4",
+    "surface": "#FAFAF8",
     "surface_raised": "#FFFFFF",
     "ink": "#1F2328",
     "ink_muted": "#5C6370",
-    "border": "#D6D9DE",
-    "selection": "#E6F0EA",
+    "border": "#DAD8D1",
+    "selection": "#EAF2EC",
     "accent": "#2F6F4F",
     "accent_contrast": "#FFFFFF",
     "focus": "#3B82F6",
