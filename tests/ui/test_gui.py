@@ -87,6 +87,17 @@ def test_conversion_completes_and_writes_output(
     assert win._phase == "done"
 
 
+def test_log_level_and_redaction_applied(qtbot):
+    import logging
+
+    config = Config()
+    config.logging.level = "DEBUG"
+    win = MainWindow(config)
+    qtbot.addWidget(win)
+    assert logging.getLogger("unmsg").level == logging.DEBUG
+    assert win._log.handler.filters  # gui log is redacted by default
+
+
 def test_settings_round_trip(qtbot):
     config = Config()
     dialog = SettingsDialog(config)
