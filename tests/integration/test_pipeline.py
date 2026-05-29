@@ -181,6 +181,23 @@ def test_deeply_nested_messages_stop(monkeypatch, tmp_path, make_record):
     assert any("deeply nested" in w for w in result.warnings)
 
 
+def test_convert_stage_error_is_humanised(monkeypatch, tmp_path, make_record):
+    import unmsg.core.pipeline as pipeline
+
+    _patch_reader(monkeypatch, make_record())
+
+    def boom(*args, **kwargs):
+        raise OSError("disk gremlin")
+
+    monkeypatch.setattr(pipeline, "_convert_record", boom)
+    src = tmp_path / "in.msg"
+    src.write_bytes(b"x")
+    result = convert_file(src, tmp_path / "out")
+    assert result.status == "failed"
+    assert "gremlin" not in (result.error or "")
+    assert "Couldn't write" in (result.error or "")
+
+
 def test_missing_file_humanised(monkeypatch, tmp_path):
     # Real read_msg raises FileNotFoundError for an absent path.
     monkeypatch.setattr(

@@ -50,7 +50,14 @@ def convert_file(
             started,
         )
 
-    result = _convert_record(record, root, opts, depth=0)
+    try:
+        result = _convert_record(record, root, opts, depth=0)
+    except Exception as exc:
+        logger.debug("convert failed for %s", src, exc_info=exc)
+        return _failed(
+            src, "Couldn't write the converted files for this message.", started
+        )
+
     result.source = src
     result.duration_ms = int((time.perf_counter() - started) * 1000)
     return result
