@@ -16,11 +16,12 @@ SRC = os.path.join(ROOT, "src")
 
 hiddenimports = collect_submodules("unmsg")
 
+ICONS = os.path.join(SRC, "unmsg", "ui", "resources", "icons")
 a = Analysis(
     [os.path.join(SRC, "unmsg", "ui", "app.py")],
     pathex=[SRC],
     binaries=[],
-    datas=[],
+    datas=[(ICONS, "unmsg/ui/resources/icons")],  # bundle the app icon assets
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],
@@ -39,6 +40,7 @@ exe = EXE(
     strip=False,
     upx=False,
     console=False,  # windowed app — no console window
+    icon=os.path.join(ICONS, "unmsg.ico"),
 )
 coll = COLLECT(
     exe,

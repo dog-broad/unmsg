@@ -4,6 +4,7 @@
 # Binary fixtures and assets must never be line-ending munged.
 *.msg binary
 *.png binary
+*.ico binary
 *.jpg binary
 *.pdf binary
 *.xlsx binary

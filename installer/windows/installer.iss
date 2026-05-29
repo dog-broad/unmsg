@@ -16,6 +16,7 @@ DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=dist\installer
 OutputBaseFilename=UnMsg-Setup-{#MyAppVersion}
+SetupIconFile=src\unmsg\ui\resources\icons\unmsg.ico
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
