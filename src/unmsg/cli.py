@@ -206,9 +206,11 @@ def _summarize(results: list[ConvertResult]) -> int:
     console.print()
     console.print(f"[green]Converted {done} of {len(results)} message(s).[/]")
     for result in warned:
-        console.print(f"  [yellow]⚠ {result.source.name}[/]: {result.warnings[0]}")
+        console.print(
+            f"  [yellow]warning[/] {result.source.name}: {result.warnings[0]}"
+        )
     for result in failed:
-        console.print(f"  [red]✗ {result.source.name}[/]: {result.error}")
+        console.print(f"  [red]failed[/] {result.source.name}: {result.error}")
 
     if failed and len(failed) == len(results):
         return EXIT_FAILED

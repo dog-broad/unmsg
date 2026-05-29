@@ -2,7 +2,21 @@
 
 from __future__ import annotations
 
-from unmsg.core.html_cleanup import clean_html, rewrite_cids, to_text
+from unmsg.core.html_cleanup import (
+    clean_html,
+    rewrite_cids,
+    strip_presentation,
+    to_text,
+)
+
+
+def test_strip_presentation_removes_styling_keeps_structure():
+    html = '<p style="color:currentcolor" class="x"><b>Hi</b></p><a href="u">link</a>'
+    out = strip_presentation(html)
+    assert "style=" not in out
+    assert "class=" not in out
+    assert "<b>Hi</b>" in out
+    assert 'href="u"' in out
 
 
 def test_to_text_strips_tags_and_keeps_content():
