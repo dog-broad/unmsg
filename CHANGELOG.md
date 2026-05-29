@@ -6,6 +6,32 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0]
+
+The desktop app arrives: drag, drop, click Convert, done — with a calm, themed
+interface. Still fully local, still no telemetry.
+
+### Added
+
+- A PySide6 desktop application (`unmsg-gui`): a drop zone that teaches the empty
+  state, a file list with live per-row status (queued, working, done, warning,
+  failed) and a right-click menu (show in Explorer, show source, copy error,
+  remove), an output options panel, a progress strip with Convert / Cancel /
+  Open Output, and a collapsible log pane.
+- Light and dark themes generated from a single set of design tokens; a "system"
+  option follows the OS.
+- Conversion runs on a background thread so the window stays responsive; Cancel
+  stops cleanly between files (no half-written output).
+- Settings dialog (General / Advanced / About) with values saved between runs;
+  window size and last output folder are remembered. The telemetry control is
+  shown switched off and disabled — a visible promise.
+- Two more output formats: **plain text** and **JSON metadata**.
+- Logs and error details redact emails and file paths by default.
+
+### Notes
+
+- The GUI installs with the optional extra: `pip install "unmsg[gui]"`.
+
 ## [0.1.0]
 
 The first working slice: a pure conversion engine and a minimal command line.
@@ -37,5 +63,6 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/dog-broad/unmsg/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dog-broad/unmsg/releases/tag/v0.1.0

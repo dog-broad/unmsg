@@ -1,0 +1,48 @@
+"""Background batch conversion for the GUI.
+
+The core is synchronous; this worker runs it on a :class:`QThread` so the window
+stays responsive, emits per-file results for live row updates, and supports
+cancellation **between files** (a file in flight always finishes cleanly, so no
+half-written bundle is ever left behind).
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from PySide6.QtCore import QObject, Signal, Slot
+
+from unmsg.core import ConvertOptions, convert_file
+from unmsg.core.models import ConvertResult
+
+
+class BatchWorker(QObject):
+    progress = Signal(int, int, str)  # done, total, current source name
+    file_result = Signal(object)  # ConvertResult, per file
+    finished = Signal(list)  # list[ConvertResult]
+
+    def __init__(
+        self, sources: list[Path], out_root: Path, options: ConvertOptions
+    ) -> None:
+        super().__init__()
+        self._sources = sources
+        self._out_root = out_root
+        self._options = options
+        self._cancelled = False
+
+    def cancel(self) -> None:
+        """Request a stop; honoured before the next file begins."""
+        self._cancelled = True
+
+    @Slot()
+    def run(self) -> None:
+        results: list[ConvertResult] = []
+        total = len(self._sources)
+        for index, source in enumerate(self._sources, start=1):
+            if self._cancelled:
+                break
+            result = convert_file(source, self._out_root, self._options)
+            results.append(result)
+            self.file_result.emit(result)
+            self.progress.emit(index, total, source.name)
+        self.finished.emit(results)
