@@ -101,6 +101,18 @@ def convert(
         bool,
         typer.Option(help="Write manifest.json (with checksums) at the output root."),
     ] = True,
+    jobs: Annotated[
+        int,
+        typer.Option(
+            "-j", "--jobs", min=1, help="Convert with this many worker processes."
+        ),
+    ] = 1,
+    timeout: Annotated[
+        float,
+        typer.Option(
+            min=0.0, help="Give up on a single message after N seconds (0 = no limit)."
+        ),
+    ] = 0.0,
 ) -> None:
     """Convert one or more .msg files."""
     sources = _discover(paths)
@@ -120,7 +132,14 @@ def convert(
         err_console.print(f"[red]{exc}[/]")
         raise typer.Exit(EXIT_FAILED) from None
 
-    results = convert_batch(sources, output, opts, progress=_progress)
+    if jobs > 1 or timeout > 0:
+        from unmsg.parallel import convert_batch_parallel
+
+        results = convert_batch_parallel(
+            sources, output, opts, jobs=jobs, timeout=timeout, progress=_progress
+        )
+    else:
+        results = convert_batch(sources, output, opts, progress=_progress)
     if manifest and results:
         write_manifest(results, output)
     raise typer.Exit(_summarize(results))
