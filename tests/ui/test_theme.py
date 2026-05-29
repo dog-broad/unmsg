@@ -73,3 +73,15 @@ def test_build_qss_resolves_chevron_into_combobox(monkeypatch, tmp_path):
     assert "@chevron" not in qss
     assert "down-arrow" in qss
     assert ".svg" in qss
+
+
+def test_tabs_are_themed_so_text_is_visible(monkeypatch, tmp_path):
+    import unmsg.paths as paths
+
+    monkeypatch.setattr(paths, "cache_dir", lambda: tmp_path)
+    for tokens in (LIGHT, DARK, HIGH_CONTRAST):
+        qss = build_qss(tokens)
+        assert "QTabBar::tab" in qss
+        # tab text uses theme ink colours, never a hard-coded black
+        assert tokens["ink"] in qss
+        assert tokens["ink_muted"] in qss

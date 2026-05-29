@@ -179,6 +179,28 @@ QMenu { background-color: @surface_raised; border: 1px solid @border; padding: 4
 QMenu::item { padding: 6px 18px; border-radius: 4px; }
 QMenu::item:selected { background-color: @selection; color: @ink; }
 
+/* ── tabs (underline style; text follows the theme) ──────────── */
+QTabWidget::pane {
+    border: 1px solid @border;
+    border-radius: 6px;
+    background-color: @surface_raised;
+    top: -1px;
+}
+QTabBar { qproperty-drawBase: 0; }
+QTabBar::tab {
+    background: transparent;
+    color: @ink_muted;
+    padding: 7px 16px;
+    margin-right: 2px;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+QTabBar::tab:hover { color: @ink; }
+QTabBar::tab:selected { color: @ink; border-bottom: 2px solid @accent; }
+
+QCheckBox, QRadioButton { spacing: 8px; }
+QTabWidget QWidget { background-color: @surface_raised; }
+
 QListWidget::item:hover { background-color: @selection; }
 
 QPlainTextEdit#logPane { font-family: "JetBrains Mono", Consolas, monospace; }
@@ -192,8 +214,10 @@ def build_qss(tokens: dict[str, str]) -> str:
     with ``ink_muted`` (generated and cached per colour).
     """
     qss = _QSS_TEMPLATE.replace("@chevron", chevron_icon_path(tokens["ink_muted"]))
-    for name, value in tokens.items():
-        qss = qss.replace(f"@{name}", value)
+    # Substitute longest names first so e.g. `@ink` doesn't clobber `@ink_muted`
+    # (a shorter token name is a prefix of a longer one).
+    for name in sorted(tokens, key=len, reverse=True):
+        qss = qss.replace(f"@{name}", tokens[name])
     return qss.strip() + "\n"
 
 
