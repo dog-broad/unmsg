@@ -70,12 +70,6 @@ class SettingsDialog(QDialog):
         self._parallel.setRange(1, 64)
         self._parallel.setValue(self._config.advanced.max_parallel)
         form.addRow("Max parallel files", self._parallel)
-
-        telemetry = QCheckBox("Send anonymous usage data")
-        telemetry.setChecked(False)
-        telemetry.setEnabled(False)
-        form.addRow(telemetry)
-        form.addRow(_muted("UnMsg never sends anything — this stays off."))
         return page
 
     def _about_tab(self) -> QWidget:
