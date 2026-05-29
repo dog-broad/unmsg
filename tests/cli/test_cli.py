@@ -62,3 +62,58 @@ def test_folder_discovery_finds_msg(monkeypatch, tmp_path, make_record):
     out = tmp_path / "out"
     result = runner.invoke(app, ["convert", str(tmp_path), "-o", str(out), "-f", "md"])
     assert result.exit_code == 0
+
+
+def test_manifest_written_by_default(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    result = runner.invoke(app, ["convert", str(src), "-o", str(out), "-f", "md"])
+    assert result.exit_code == 0
+    assert (out / "manifest.json").exists()
+
+
+def test_no_manifest_flag_skips_it(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    result = runner.invoke(
+        app, ["convert", str(src), "-o", str(out), "-f", "md", "--no-manifest"]
+    )
+    assert result.exit_code == 0
+    assert not (out / "manifest.json").exists()
+
+
+def test_eml_format_is_produced(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    result = runner.invoke(app, ["convert", str(src), "-o", str(out), "-f", "eml"])
+    assert result.exit_code == 0
+    assert list(out.rglob("*.eml"))
+
+
+def test_invalid_on_conflict_returns_2(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    result = runner.invoke(
+        app,
+        ["convert", str(src), "-o", str(tmp_path / "out"), "--on-conflict", "bogus"],
+    )
+    assert result.exit_code == 2
+
+
+def test_naming_template_applied(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    result = runner.invoke(
+        app, ["convert", str(src), "-o", str(out), "-f", "md", "--naming", "{subject}"]
+    )
+    assert result.exit_code == 0
+    assert (out / "Quarterly Report.md").exists()
