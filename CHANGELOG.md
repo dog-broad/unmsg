@@ -6,6 +6,21 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.6]
+
+A clean restyle to a Tailwind-like look, with colored format badges.
+
+### Changed
+
+- Reworked the desktop palette as a Tailwind-like slate system — clean white
+  surfaces (slate-900 in dark) separated by crisp borders. This reverts the
+  earlier grey canvas, the tint behind row text, the accent wordmark, and the
+  drop-zone shadow.
+- File-type indicators are now **per-format colored badges** — Markdown, HTML,
+  single-file HTML, text, JSON, EML, and PDF each get a distinct colour — so the
+  output formats are identifiable at a glance, in every theme.
+- The themed tab bar (from 0.5.3) is retained.
+
 ## [0.5.5]
 
 ### Changed
@@ -232,7 +247,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.6...HEAD
+[0.5.6]: https://github.com/dog-broad/unmsg/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/dog-broad/unmsg/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/dog-broad/unmsg/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/dog-broad/unmsg/compare/v0.5.2...v0.5.3

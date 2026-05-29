@@ -62,9 +62,13 @@ class FileRowDelegate(QStyledItemDelegate):
     def __init__(self) -> None:
         super().__init__()
         self._tokens = LIGHT
+        self._badges: dict[str, tuple[str, str]] = {}
 
     def set_tokens(self, tokens: dict[str, str]) -> None:
         self._tokens = tokens
+
+    def set_badges(self, palette: dict[str, tuple[str, str]]) -> None:
+        self._badges = palette
 
     def sizeHint(self, option: QStyleOptionViewItem, index) -> QSize:  # type: ignore[no-untyped-def]
         return QSize(0, _ROW_HEIGHT)
@@ -137,16 +141,16 @@ class FileRowDelegate(QStyledItemDelegate):
         x = right
         height = 18
         metrics = painter.fontMetrics()
-        fill = QColor(t.get("selection", t["surface"]))
-        text = QColor(t["accent"])
+        default = (t.get("selection", t["surface"]), t["accent"])
         for fmt in reversed(chips):
             label = _CHIP_LABEL.get(fmt, fmt)
+            bg, fg = self._badges.get(fmt, default)
             w = metrics.horizontalAdvance(label) + 14  # compact px-2
             badge = QRectF(x - w, rect.center().y() - height / 2, w, height)
-            painter.setBrush(fill)
+            painter.setBrush(QColor(bg))
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(badge, 6, 6)  # Tailwind rounded-md
-            painter.setPen(text)
+            painter.setPen(QColor(fg))
             painter.drawText(badge, int(Qt.AlignmentFlag.AlignCenter), label)
             x -= w + 6
         return x
@@ -182,6 +186,10 @@ class FileList(QListWidget):
 
     def set_tokens(self, tokens: dict[str, str]) -> None:
         self._delegate.set_tokens(tokens)
+        self.viewport().update()
+
+    def set_badges(self, palette: dict[str, tuple[str, str]]) -> None:
+        self._delegate.set_badges(palette)
         self.viewport().update()
 
     def add_paths(self, paths: list[Path]) -> int:

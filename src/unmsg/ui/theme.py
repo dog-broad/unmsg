@@ -13,37 +13,37 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PySide6.QtWidgets import QApplication
 
-# Roles mirror the brand's named tokens. A clean near-white window over white
-# cards; depth comes from borders, a soft shadow on the drop zone, and the
-# selection tint — not a grey wash. `selection` is a faint accent tint.
+# A Tailwind-like neutral slate scale on white (light) / slate-900 (dark),
+# separated by clearly-visible borders. `selection` is for menu/combobox
+# highlight only — never a background behind list-row text.
 LIGHT: dict[str, str] = {
-    "surface": "#FAFAF8",
+    "surface": "#FFFFFF",
     "surface_raised": "#FFFFFF",
-    "ink": "#1F2328",
-    "ink_muted": "#5C6370",
-    "border": "#DAD8D1",
-    "selection": "#EAF2EC",
+    "ink": "#1E293B",
+    "ink_muted": "#64748B",
+    "border": "#E2E8F0",
+    "selection": "#F1F5F9",
     "accent": "#2F6F4F",
     "accent_contrast": "#FFFFFF",
     "focus": "#3B82F6",
-    "error": "#B4232A",
-    "warning": "#9A6A00",
-    "success": "#2E7D46",
+    "error": "#DC2626",
+    "warning": "#D97706",
+    "success": "#16A34A",
 }
 
 DARK: dict[str, str] = {
-    "surface": "#161719",
-    "surface_raised": "#212327",
-    "ink": "#ECECEC",
-    "ink_muted": "#9AA0A8",
-    "border": "#34373E",
-    "selection": "#1F2A24",
-    "accent": "#4CAF7D",
-    "accent_contrast": "#0E1A13",
+    "surface": "#0F172A",
+    "surface_raised": "#1E293B",
+    "ink": "#E2E8F0",
+    "ink_muted": "#94A3B8",
+    "border": "#334155",
+    "selection": "#334155",
+    "accent": "#34D399",
+    "accent_contrast": "#052E1B",
     "focus": "#60A5FA",
-    "error": "#F1707A",
-    "warning": "#E0B341",
-    "success": "#6BD68F",
+    "error": "#F87171",
+    "warning": "#FBBF24",
+    "success": "#4ADE80",
 }
 
 # Maximum-contrast set: pure black/white with a vivid accent and a distinct
@@ -63,6 +63,40 @@ HIGH_CONTRAST: dict[str, str] = {
     "success": "#00FF7F",
 }
 
+# Per-format badge colours (bg, text) — Tailwind -100/-700 (light) and a darker
+# pairing (dark). High-contrast uses one legible style for all formats.
+_BADGES_LIGHT: dict[str, tuple[str, str]] = {
+    "md": ("#F1F5F9", "#475569"),
+    "html": ("#E0F2FE", "#0369A1"),
+    "html_single": ("#E0E7FF", "#4338CA"),
+    "txt": ("#F4F4F5", "#52525B"),
+    "json": ("#FEF3C7", "#B45309"),
+    "eml": ("#EDE9FE", "#6D28D9"),
+    "pdf": ("#FFE4E6", "#BE123C"),
+}
+_BADGES_DARK: dict[str, tuple[str, str]] = {
+    "md": ("#334155", "#CBD5E1"),
+    "html": ("#0C4A6E", "#7DD3FC"),
+    "html_single": ("#312E81", "#A5B4FC"),
+    "txt": ("#3F3F46", "#D4D4D8"),
+    "json": ("#78350F", "#FCD34D"),
+    "eml": ("#4C1D95", "#C4B5FD"),
+    "pdf": ("#881337", "#FDA4AF"),
+}
+_BADGE_HC: tuple[str, str] = ("#3A3A00", "#FFFF00")
+
+
+def badge_palette(
+    theme: str, *, system_is_dark: bool = False
+) -> dict[str, tuple[str, str]]:
+    """Per-format (bg, text) badge colours for the active theme."""
+    if theme == "high-contrast":
+        return dict.fromkeys(_BADGES_LIGHT, _BADGE_HC)
+    if theme == "dark" or (theme == "system" and system_is_dark):
+        return _BADGES_DARK
+    return _BADGES_LIGHT
+
+
 _QSS_TEMPLATE = """
 QWidget {
     background-color: @surface;
@@ -74,7 +108,7 @@ QLabel[muted="true"] { color: @ink_muted; }
 
 /* ── header & chrome ─────────────────────────────────────────── */
 QFrame#header { background-color: @surface; border-bottom: 1px solid @border; }
-QLabel#brand { font-size: 20px; font-weight: 600; color: @accent; }
+QLabel#brand { font-size: 20px; font-weight: 600; color: @ink; }
 QLabel#trustLine { color: @ink_muted; font-size: 12px; }
 QFrame#actionBar { background-color: @surface; border-top: 1px solid @border; }
 QLabel#statusLabel, QLabel#countLabel { color: @ink_muted; }
