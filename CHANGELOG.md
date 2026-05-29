@@ -6,6 +6,16 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.4]
+
+### Changed
+
+- Reverted the grey window background introduced in 0.5.2 — the app is a clean
+  near-white again; panels are separated by borders and a soft shadow on the
+  drop zone rather than a grey wash.
+- Format indicators are now compact Tailwind-style badges (lightly rounded, soft
+  tint) instead of full-rounded capsules.
+
 ## [0.5.3]
 
 ### Fixed
@@ -213,7 +223,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.4...HEAD
+[0.5.4]: https://github.com/dog-broad/unmsg/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/dog-broad/unmsg/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/dog-broad/unmsg/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/dog-broad/unmsg/compare/v0.5.0...v0.5.1
