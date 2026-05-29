@@ -6,6 +6,18 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.8]
+
+### Fixed
+
+- The log pane's toggle now uses the same crisp chevron as the options bar
+  (no more stray arrow glyph).
+- Changing the log level in Settings now takes effect immediately, so turning on
+  DEBUG actually shows debug messages. The on-screen log is redacted too (emails
+  and paths removed), and conversions emit per-file debug lines.
+- Settings tabs render as clean underline tabs with a single divider — their
+  border no longer overlaps the content/buttons below, in light or dark.
+
 ## [0.5.7]
 
 More colour, used meaningfully.
@@ -258,7 +270,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.7...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.8...HEAD
+[0.5.8]: https://github.com/dog-broad/unmsg/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/dog-broad/unmsg/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/dog-broad/unmsg/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/dog-broad/unmsg/compare/v0.5.4...v0.5.5
