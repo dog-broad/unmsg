@@ -5,10 +5,13 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QThread
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QThread, QUrl
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
+    QFrame,
     QGraphicsOpacityEffect,
     QHBoxLayout,
+    QLabel,
     QMainWindow,
     QPushButton,
     QStackedWidget,
@@ -19,8 +22,8 @@ from PySide6.QtWidgets import (
 from unmsg.config import Config, save_config
 from unmsg.core.models import ConvertResult
 from unmsg.logging_setup import LOGGER_NAME
-from unmsg.ui.dialogs.about import AboutDialog
 from unmsg.ui.dialogs.error_details import ErrorDetailsDialog
+from unmsg.ui.dialogs.help import HelpDialog
 from unmsg.ui.dialogs.settings import SettingsDialog
 from unmsg.ui.theme import apply_theme
 from unmsg.ui.widgets.drop_zone import DropZone
@@ -45,9 +48,11 @@ class MainWindow(QMainWindow):
 
         root = QWidget()
         self.setCentralWidget(root)
-        outer = QVBoxLayout(root)
+        self._outer = QVBoxLayout(root)
+        outer = self._outer
 
         outer.addLayout(self._build_top_bar())
+        self._update_banner: QFrame | None = None
         outer.addLayout(self._build_body(), 1)
 
         self._progress = ProgressStrip()
@@ -72,7 +77,7 @@ class MainWindow(QMainWindow):
         settings = QPushButton("Settings")
         settings.clicked.connect(self._open_settings)
         about = QPushButton("Help")
-        about.clicked.connect(self._open_about)
+        about.clicked.connect(self._open_help)
         bar.addWidget(title)
         bar.addStretch(1)
         bar.addWidget(settings)
@@ -207,11 +212,34 @@ class MainWindow(QMainWindow):
             apply_theme(self._app(), self._config.ui.theme)
             self._persist()
 
-    def _open_about(self) -> None:
-        AboutDialog(self).exec()
+    def _open_help(self) -> None:
+        HelpDialog(self).exec()
 
     def show_error(self, message: str, details: str = "") -> None:
         ErrorDetailsDialog(message, details, self).exec()
+
+    def show_update_banner(self, latest: str, url: str) -> None:
+        """Show a dismissible 'a new version is available' strip (opt-in only)."""
+        if self._update_banner is not None:
+            return
+        banner = QFrame()
+        banner.setObjectName("card")
+        row = QHBoxLayout(banner)
+        row.addWidget(QLabel(f"Version {latest} is available."))
+        row.addStretch(1)
+        download = QPushButton("Download")
+        download.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(url)))
+        later = QPushButton("Later")
+        later.clicked.connect(self._dismiss_update_banner)
+        row.addWidget(download)
+        row.addWidget(later)
+        self._outer.insertWidget(0, banner)
+        self._update_banner = banner
+
+    def _dismiss_update_banner(self) -> None:
+        if self._update_banner is not None:
+            self._update_banner.setParent(None)
+            self._update_banner = None
 
     def _persist(self) -> None:
         self._config.ui.window_width = self.width()

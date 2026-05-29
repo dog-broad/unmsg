@@ -6,6 +6,29 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0]
+
+Ready for a non-technical Windows user: a real installer, a gentle first run, and
+honest diagnostics — all still fully local.
+
+### Added
+
+- A Windows installer built with PyInstaller + Inno Setup: a single setup `.exe`
+  with a Start-menu shortcut and optional desktop shortcut, Send To entry, and a
+  "Convert with UnMsg" entry on the `.msg` right-click menu.
+- A first-run welcome screen that teaches the drop-and-convert gesture.
+- Combined Help/About with quick-start steps and the privacy promise.
+- An opt-in update check (off by default) that reads the public releases list and
+  shows a dismissible banner; "Download" opens your browser. It never downloads
+  or installs anything, and it's the only outbound network call in the app.
+- A crash reporter that writes a redacted report to disk (emails and paths
+  removed) and points you to the issue tracker — never uploading anything.
+
+### Notes
+
+- Releases are unsigned for now: SmartScreen shows a warning — click
+  **More info → Run anyway**. Code signing is planned for 1.0.
+
 ## [0.2.0]
 
 The desktop app arrives: drag, drop, click Convert, done — with a calm, themed
@@ -63,6 +86,7 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/dog-broad/unmsg/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dog-broad/unmsg/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dog-broad/unmsg/releases/tag/v0.1.0
