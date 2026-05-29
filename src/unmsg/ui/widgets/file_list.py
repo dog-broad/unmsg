@@ -136,22 +136,22 @@ class FileRowDelegate(QStyledItemDelegate):
             return right
         chip_font = QFont()
         chip_font.setPointSizeF(8.5)
-        chip_font.setWeight(QFont.Weight.DemiBold)
+        chip_font.setWeight(QFont.Weight.Medium)
         painter.setFont(chip_font)
         x = right
-        height = 20
+        height = 18
         metrics = painter.fontMetrics()
         fill = QColor(t.get("selection", t["surface"]))
         text = QColor(t["accent"])
         for fmt in reversed(chips):
             label = _CHIP_LABEL.get(fmt, fmt)
-            w = metrics.horizontalAdvance(label) + 20
-            pill = QRectF(x - w, rect.center().y() - height / 2, w, height)
+            w = metrics.horizontalAdvance(label) + 14  # compact px-2
+            badge = QRectF(x - w, rect.center().y() - height / 2, w, height)
             painter.setBrush(fill)
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawRoundedRect(pill, height / 2, height / 2)  # full pill
+            painter.drawRoundedRect(badge, 6, 6)  # Tailwind rounded-md
             painter.setPen(text)
-            painter.drawText(pill, int(Qt.AlignmentFlag.AlignCenter), label)
+            painter.drawText(badge, int(Qt.AlignmentFlag.AlignCenter), label)
             x -= w + 6
         return x
 
