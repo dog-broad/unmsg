@@ -6,6 +6,22 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.3]
+
+### Fixed
+
+- Settings tab labels were invisible in dark and high-contrast themes (black text
+  on a dark background); tabs now use the theme's text colour with an accent
+  underline on the active tab.
+- Theme colours were mis-applied where one token name is a prefix of another
+  (e.g. muted text, raised surfaces, button-text-on-accent): the stylesheet now
+  substitutes the longest names first, so every element gets its intended colour.
+
+### Changed
+
+- Format indicators on each row are now filled, rounded **pills** in the brand
+  tint — clearer and easier to scan than the previous thin outlines.
+
 ## [0.5.2]
 
 A visual depth pass: the window no longer reads as flat white-on-white.
@@ -197,7 +213,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/dog-broad/unmsg/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/dog-broad/unmsg/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/dog-broad/unmsg/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/dog-broad/unmsg/compare/v0.4.0...v0.5.0
