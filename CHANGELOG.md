@@ -6,6 +6,14 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.9]
+
+### Added
+
+- An app icon — an open envelope with a letter of text emerging, on the brand
+  green tile — shown on the window and taskbar, and used for the Windows
+  installer and the packaged executable.
+
 ## [0.5.8]
 
 ### Fixed
@@ -270,7 +278,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.9...HEAD
+[0.5.9]: https://github.com/dog-broad/unmsg/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/dog-broad/unmsg/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/dog-broad/unmsg/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/dog-broad/unmsg/compare/v0.5.5...v0.5.6
