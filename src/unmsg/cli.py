@@ -113,12 +113,27 @@ def convert(
             min=0.0, help="Give up on a single message after N seconds (0 = no limit)."
         ),
     ] = 0.0,
+    resume: Annotated[
+        bool,
+        typer.Option(help="Skip messages already converted (per the manifest)."),
+    ] = False,
 ) -> None:
     """Convert one or more .msg files."""
     sources = _discover(paths)
     if not sources:
         err_console.print("[yellow]No .msg files found in what you gave me.[/]")
         raise typer.Exit(EXIT_NO_INPUT)
+
+    carried: list[dict[str, object]] = []
+    if resume:
+        from unmsg.resume import plan_resume
+
+        sources, carried = plan_resume(sources, output)
+        if carried:
+            console.print(f"  resuming — skipping {len(carried)} already done")
+        if not sources:
+            console.print("[green]Nothing to do — everything is already converted.[/]")
+            raise typer.Exit(EXIT_OK)
 
     try:
         opts = ConvertOptions(
@@ -140,8 +155,8 @@ def convert(
         )
     else:
         results = convert_batch(sources, output, opts, progress=_progress)
-    if manifest and results:
-        write_manifest(results, output)
+    if manifest and (results or carried):
+        write_manifest(results, output, carried=carried)
     raise typer.Exit(_summarize(results))
 
 

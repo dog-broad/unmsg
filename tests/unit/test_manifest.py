@@ -57,6 +57,12 @@ def test_write_manifest_creates_file(tmp_path):
     assert data["messages"][0]["source"] == "a.msg"
 
 
+def test_carried_entries_are_merged_and_sorted(tmp_path):
+    carried = [{"source": "zzz.msg", "status": "success", "outputs": []}]
+    manifest = build_manifest([_result("aaa.msg", tmp_path)], tmp_path, carried=carried)
+    assert [m["source"] for m in manifest["messages"]] == ["aaa.msg", "zzz.msg"]
+
+
 def test_failed_result_records_error(tmp_path):
     res = _result("bad.msg", tmp_path, status="failed")
     res.error = "Couldn't read this message."

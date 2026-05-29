@@ -9,6 +9,7 @@ manifest that an archivist can diff and verify a copy against.
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from pathlib import Path
 
 from unmsg._version import __version__
@@ -17,23 +18,38 @@ from unmsg.core.models import ConvertResult
 MANIFEST_SCHEMA = 1
 MANIFEST_NAME = "manifest.json"
 
+Entry = dict[str, object]
 
-def build_manifest(results: list[ConvertResult], out_root: Path) -> dict[str, object]:
-    messages = [_entry(result, out_root) for result in _sorted(results)]
+
+def build_manifest(
+    results: list[ConvertResult],
+    out_root: Path,
+    *,
+    carried: Sequence[Entry] = (),
+) -> dict[str, object]:
+    """Build the manifest. ``carried`` are pre-existing entries (e.g. for sources
+    skipped on resume) merged in unchanged."""
+    entries = [_entry(result, out_root) for result in results] + list(carried)
+    entries.sort(key=lambda e: str(e.get("source", "")).lower())
     return {
         "schema": MANIFEST_SCHEMA,
         "tool": "unmsg",
         "version": __version__,
-        "messages": messages,
+        "messages": entries,
     }
 
 
 def write_manifest(
-    results: list[ConvertResult], out_root: Path, *, path: Path | None = None
+    results: list[ConvertResult],
+    out_root: Path,
+    *,
+    path: Path | None = None,
+    carried: Sequence[Entry] = (),
 ) -> Path:
     target = path or (out_root / MANIFEST_NAME)
     target.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(build_manifest(results, out_root), indent=2, ensure_ascii=False)
+    manifest = build_manifest(results, out_root, carried=carried)
+    text = json.dumps(manifest, indent=2, ensure_ascii=False)
     target.write_text(text + "\n", encoding="utf-8")
     return target
 
@@ -51,10 +67,6 @@ def _entry(result: ConvertResult, out_root: Path) -> dict[str, object]:
         "warnings": result.warnings,
         "error": result.error,
     }
-
-
-def _sorted(results: list[ConvertResult]) -> list[ConvertResult]:
-    return sorted(results, key=lambda r: str(r.source).lower())
 
 
 def _rel(path: Path, root: Path) -> str:
