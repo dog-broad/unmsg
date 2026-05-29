@@ -27,6 +27,21 @@ def test_drop_adds_files_and_switches_view(qtbot, tmp_path, make_record, monkeyp
     assert win._files.count() == 1
 
 
+def test_file_list_filter_hides_non_matching(qtbot, tmp_path):
+    win = MainWindow(Config())
+    qtbot.addWidget(win)
+    for name in ("report.msg", "budget.msg", "report-2.msg"):
+        (tmp_path / name).write_bytes(b"x")
+    win._add_paths(
+        [tmp_path / "report.msg", tmp_path / "budget.msg", tmp_path / "report-2.msg"]
+    )
+    assert win._files.visible_count() == 3
+    win._filter.setText("report")
+    assert win._files.visible_count() == 2
+    win._filter.setText("")
+    assert win._files.visible_count() == 3
+
+
 def test_file_list_state_transitions(qtbot, tmp_path):
     widget = FileList()
     qtbot.addWidget(widget)

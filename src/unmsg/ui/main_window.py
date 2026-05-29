@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMainWindow,
     QPushButton,
     QStackedWidget,
@@ -105,6 +106,13 @@ class MainWindow(QMainWindow):
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
+
+        self._filter = QLineEdit()
+        self._filter.setPlaceholderText("Filter files…")
+        self._filter.setClearButtonEnabled(True)
+        self._filter.textChanged.connect(self._files.set_filter)
+        layout.addWidget(self._filter)
+
         layout.addWidget(self._files, 1)
 
         actions = QHBoxLayout()
