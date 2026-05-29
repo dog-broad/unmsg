@@ -6,6 +6,36 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0]
+
+Performance, resilience, accessibility — and PDF.
+
+### Added
+
+- **PDF output** (optional `unmsg[pdf]` extra) — pure-Python and deterministic;
+  renders a clean, best-effort PDF from the message.
+- **Parallel conversion** — `--jobs N` converts across worker processes.
+- **Per-file timeout** — `--timeout S` stops a single stuck message (the worker
+  is terminated) without taking the rest of the batch down.
+- **Resume** — `--resume` skips messages already converted, verified by matching
+  each output's checksum against the manifest; skipped entries are carried
+  forward.
+- **File search/filter** in the desktop app's file list.
+- A **high-contrast theme**.
+
+### Changed
+
+- A format that fails or whose optional dependency is missing now degrades to a
+  warning for that one format — the other formats still convert.
+- Removed the (disabled) telemetry control from Settings: the app collects
+  nothing, so it shows no such UI.
+
+### Fixed
+
+- PDF renders reliably from real Outlook HTML (its modern CSS is reduced to
+  plain markup first).
+- Command-line output no longer errors when redirected to a file on Windows.
+
 ## [0.4.0]
 
 For scripters and archivists: a fuller command line, a stable Python API, batch
@@ -134,7 +164,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/dog-broad/unmsg/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/dog-broad/unmsg/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/dog-broad/unmsg/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/dog-broad/unmsg/compare/v0.3.0...v0.3.1
