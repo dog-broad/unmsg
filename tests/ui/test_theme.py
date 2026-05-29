@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
-from unmsg.ui.theme import DARK, HIGH_CONTRAST, LIGHT, build_qss, tokens_for
+from pathlib import Path
+
+from unmsg.ui.theme import (
+    DARK,
+    HIGH_CONTRAST,
+    LIGHT,
+    build_qss,
+    chevron_icon_path,
+    tokens_for,
+)
 
 
 def test_build_qss_substitutes_tokens():
@@ -31,3 +40,36 @@ def test_high_contrast_qss_builds():
     qss = build_qss(HIGH_CONTRAST)
     assert "@" not in qss.replace("@token", "")  # no leftover placeholders
     assert HIGH_CONTRAST["focus"] in qss
+
+
+def test_all_themes_have_a_selection_token():
+    for tokens in (LIGHT, DARK, HIGH_CONTRAST):
+        assert "selection" in tokens
+
+
+def test_surface_and_raised_differ_for_depth():
+    # the whole point of the pass: cards must read against the window background
+    assert LIGHT["surface"] != LIGHT["surface_raised"]
+    assert DARK["surface"] != DARK["surface_raised"]
+
+
+def test_chevron_icon_generated_and_tinted(tmp_path, monkeypatch):
+    import unmsg.paths as paths
+
+    monkeypatch.setattr(paths, "cache_dir", lambda: tmp_path)
+    down = chevron_icon_path("#5C6370")
+    up = chevron_icon_path("#5C6370", up=True)
+    assert down.endswith(".svg") and up.endswith(".svg")
+    assert down != up
+    body = Path(down).read_text("utf-8")
+    assert "#5C6370" in body and "<svg" in body
+
+
+def test_build_qss_resolves_chevron_into_combobox(monkeypatch, tmp_path):
+    import unmsg.paths as paths
+
+    monkeypatch.setattr(paths, "cache_dir", lambda: tmp_path)
+    qss = build_qss(LIGHT)
+    assert "@chevron" not in qss
+    assert "down-arrow" in qss
+    assert ".svg" in qss
