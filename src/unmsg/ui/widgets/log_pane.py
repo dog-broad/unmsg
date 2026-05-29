@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import logging
 
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, QSize, Signal
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
+
+from unmsg.ui.theme import chevron_icon_path
 
 
 class _LogBridge(QObject):
@@ -38,8 +41,11 @@ class LogPane(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        self._toggle = QPushButton()
+        self._chevron_color = "#64748B"
+        self._toggle = QPushButton("Log")
+        self._toggle.setObjectName("ghost")
         self._toggle.setCheckable(True)
+        self._toggle.setIconSize(QSize(12, 12))
         self._toggle.clicked.connect(self._on_toggle)
 
         self._view = QPlainTextEdit()
@@ -65,7 +71,16 @@ class LogPane(QWidget):
     def set_collapsed(self, collapsed: bool) -> None:
         self._view.setVisible(not collapsed)
         self._toggle.setChecked(not collapsed)
-        self._toggle.setText("Log ▴" if not collapsed else "Log ▾")
+        self._refresh_icon()
+
+    def set_chevron_color(self, color: str) -> None:
+        self._chevron_color = color
+        self._refresh_icon()
+
+    def _refresh_icon(self) -> None:
+        # collapsed → up, expanded → down (matches the options bar)
+        up = self.is_collapsed()
+        self._toggle.setIcon(QIcon(chevron_icon_path(self._chevron_color, up=up)))
 
     def _on_toggle(self) -> None:
         self.set_collapsed(self._view.isVisible())

@@ -226,27 +226,25 @@ QMenu { background-color: @surface_raised; border: 1px solid @border; padding: 4
 QMenu::item { padding: 6px 18px; border-radius: 4px; }
 QMenu::item:selected { background-color: @selection; color: @ink; }
 
-/* ── tabs (underline style; text follows the theme) ──────────── */
+/* ── tabs (underline style; one divider, no boxed pane) ──────── */
 QTabWidget::pane {
-    border: 1px solid @border;
-    border-radius: 6px;
-    background-color: @surface_raised;
-    top: -1px;
+    border: none;
+    border-top: 1px solid @border;
 }
-QTabBar { qproperty-drawBase: 0; }
+QTabBar { qproperty-drawBase: 0; background: transparent; }
 QTabBar::tab {
     background: transparent;
     color: @ink_muted;
     padding: 7px 16px;
-    margin-right: 2px;
+    margin-right: 4px;
     border: none;
     border-bottom: 2px solid transparent;
+    margin-bottom: -1px;  /* sit the underline on the pane's divider */
 }
 QTabBar::tab:hover { color: @ink; }
 QTabBar::tab:selected { color: @ink; border-bottom: 2px solid @accent; }
 
 QCheckBox, QRadioButton { spacing: 8px; }
-QTabWidget QWidget { background-color: @surface_raised; }
 
 QPlainTextEdit#logPane { font-family: "JetBrains Mono", Consolas, monospace; }
 """

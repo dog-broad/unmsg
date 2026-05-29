@@ -8,6 +8,7 @@ half-written bundle is ever left behind).
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from PySide6.QtCore import QObject, Signal, Slot
@@ -15,6 +16,8 @@ from PySide6.QtCore import QObject, Signal, Slot
 from unmsg.core import ConvertOptions, convert_file
 from unmsg.core.models import ConvertResult
 from unmsg.updates import check_for_update
+
+logger = logging.getLogger("unmsg.ui.worker")
 
 
 class BatchWorker(QObject):
@@ -41,8 +44,13 @@ class BatchWorker(QObject):
         total = len(self._sources)
         for index, source in enumerate(self._sources, start=1):
             if self._cancelled:
+                logger.debug("cancelled before %s", source.name)
                 break
+            logger.debug("converting %d/%d: %s", index, total, source.name)
             result = convert_file(source, self._out_root, self._options)
+            logger.debug(
+                "  -> %s (%d output file(s))", result.status, len(result.output_paths)
+            )
             results.append(result)
             self.file_result.emit(result)
             self.progress.emit(index, total, source.name)

@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
         logging.getLogger(LOGGER_NAME).addHandler(self._log.handler)
         self._outer.addWidget(self._log)
 
+        self._apply_logging()
         self._apply_list_tokens()
         self._update_view()
         self._set_phase("idle")
@@ -335,6 +336,8 @@ class MainWindow(QMainWindow):
 
         self._progress.setRange(0, len(sources))
         self._progress.setValue(0)
+        logger.info("Converting %d file(s) to %s", len(sources), out_root)
+        logger.debug("formats=%s naming=%s", options.formats, options.naming_template)
         self._set_phase("working")
         self._thread.start()
 
@@ -391,6 +394,7 @@ class MainWindow(QMainWindow):
         if dialog.exec():
             apply_theme(self._app(), self._config.ui.theme)
             self._apply_list_tokens()
+            self._apply_logging()
             self._persist()
 
     def _open_help(self) -> None:
@@ -430,7 +434,19 @@ class MainWindow(QMainWindow):
         self._tokens = tokens_for(theme, system_is_dark=is_dark)
         self._files.set_tokens(self._tokens)
         self._files.set_badges(badge_palette(theme, system_is_dark=is_dark))
+        self._log.set_chevron_color(self._tokens["ink_muted"])
         self._refresh_options_chevron()
+
+    def _apply_logging(self) -> None:
+        """Apply the configured log level and redaction to the log pane (live)."""
+        from unmsg.logging_setup import RedactingFilter
+
+        unmsg_logger = logging.getLogger(LOGGER_NAME)
+        unmsg_logger.setLevel(self._config.logging.level.upper())
+        for existing in list(self._log.handler.filters):
+            self._log.handler.removeFilter(existing)
+        if self._config.logging.redact_pii:
+            self._log.handler.addFilter(RedactingFilter())
 
     def _persist(self) -> None:
         self._config.ui.window_width = self.width()
