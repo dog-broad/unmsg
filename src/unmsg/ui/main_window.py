@@ -11,10 +11,11 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QThread, QUrl
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, QThread, QUrl
+from PySide6.QtGui import QColor, QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QFrame,
+    QGraphicsDropShadowEffect,
     QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
@@ -33,7 +34,7 @@ from unmsg.logging_setup import LOGGER_NAME
 from unmsg.ui.dialogs.error_details import ErrorDetailsDialog
 from unmsg.ui.dialogs.help import HelpDialog
 from unmsg.ui.dialogs.settings import SettingsDialog
-from unmsg.ui.theme import apply_theme, tokens_for
+from unmsg.ui.theme import apply_theme, chevron_icon_path, tokens_for
 from unmsg.ui.widgets.drop_zone import DropZone
 from unmsg.ui.widgets.file_list import FileList, _reveal
 from unmsg.ui.widgets.log_pane import LogPane
@@ -52,6 +53,10 @@ class MainWindow(QMainWindow):
         self._worker: object | None = None
         self._phase = "idle"  # idle | ready | working | done
         self._last_results: list[ConvertResult] = []
+        self._tokens = tokens_for(
+            config.ui.theme,
+            system_is_dark=config.ui.theme in ("dark", "high-contrast"),
+        )
 
         self.setWindowTitle("UnMsg")
         self.resize(config.ui.window_width, config.ui.window_height)
@@ -120,6 +125,7 @@ class MainWindow(QMainWindow):
         self._stack = QStackedWidget()
         self._drop = DropZone()
         self._drop.paths_dropped.connect(self._add_paths)
+        _elevate(self._drop)
         self._files = FileList()
         self._stack.addWidget(self._wrap(self._drop))  # 0: empty
         self._stack.addWidget(self._build_list_page())  # 1: list
@@ -191,18 +197,22 @@ class MainWindow(QMainWindow):
         self._options.setVisible(shown)
         if not shown:
             self._refresh_options_summary()
+        self._refresh_options_chevron()
 
     def _refresh_options_summary(self) -> None:
         formats = ", ".join(
             self._format_label(f) for f in self._options.selected_formats()
         )
         out = self._options.output_dir()
-        caret = "⌃" if self._options.isVisible() else "⌄"
-        summary = (
-            f"  Output  {_short_path(out)}      "
-            f"Formats  {formats or 'none'}      {caret}"
-        )
+        summary = f"   Output  {_short_path(out)}        Formats  {formats or 'none'}"
         self._options_bar.setText(summary)
+        self._refresh_options_chevron()
+
+    def _refresh_options_chevron(self) -> None:
+        color = self._tokens.get("ink_muted", "#5C6370")
+        up = self._options.isVisible()
+        self._options_bar.setIcon(QIcon(chevron_icon_path(color, up=up)))
+        self._options_bar.setIconSize(QSize(12, 12))
 
     @staticmethod
     def _format_label(fmt: str) -> str:
@@ -411,9 +421,9 @@ class MainWindow(QMainWindow):
 
     def _apply_list_tokens(self) -> None:
         is_dark = self._config.ui.theme in ("dark", "high-contrast")
-        self._files.set_tokens(
-            tokens_for(self._config.ui.theme, system_is_dark=is_dark)
-        )
+        self._tokens = tokens_for(self._config.ui.theme, system_is_dark=is_dark)
+        self._files.set_tokens(self._tokens)
+        self._refresh_options_chevron()
 
     def _persist(self) -> None:
         self._config.ui.window_width = self.width()
@@ -456,3 +466,12 @@ def _result_formats(result: ConvertResult) -> list[str]:
 def _short_path(path: Path) -> str:
     text = str(path)
     return text if len(text) <= 40 else "…" + text[-39:]
+
+
+def _elevate(widget: QWidget) -> None:
+    """A soft drop shadow for gentle depth (subtle on dark themes)."""
+    shadow = QGraphicsDropShadowEffect(widget)
+    shadow.setBlurRadius(24)
+    shadow.setOffset(0, 3)
+    shadow.setColor(QColor(0, 0, 0, 38))
+    widget.setGraphicsEffect(shadow)

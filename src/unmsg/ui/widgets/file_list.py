@@ -76,8 +76,14 @@ class FileRowDelegate(QStyledItemDelegate):
         t = self._tokens
         rect = option.rect
 
-        if option.state & QStyle.StateFlag.State_Selected:
-            painter.fillRect(rect, QColor(t["border"]))
+        flags = option.state
+        if flags & (QStyle.StateFlag.State_Selected | QStyle.StateFlag.State_MouseOver):
+            painter.fillRect(rect, QColor(t.get("selection", t["surface"])))
+        # hairline separator between rows
+        painter.setPen(QColor(t["border"]))
+        painter.drawLine(
+            rect.left() + 16, rect.bottom(), rect.right() - 16, rect.bottom()
+        )
 
         left = rect.left() + 16
         # state dot
@@ -170,6 +176,7 @@ class FileList(QListWidget):
         super().__init__()
         self.setSelectionMode(QListWidget.SelectionMode.ExtendedSelection)
         self.setUniformItemSizes(True)
+        self.setMouseTracking(True)  # so rows repaint on hover
         self._delegate = FileRowDelegate()
         self.setItemDelegate(self._delegate)
 

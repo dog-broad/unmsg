@@ -13,13 +13,15 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PySide6.QtWidgets import QApplication
 
-# Roles mirror the brand's named tokens (light / dark pairs).
+# Roles mirror the brand's named tokens. A cool grey window background against
+# white raised cards gives depth; `selection` is a faint accent tint.
 LIGHT: dict[str, str] = {
-    "surface": "#FAFAF8",
+    "surface": "#F1F2F4",
     "surface_raised": "#FFFFFF",
     "ink": "#1F2328",
     "ink_muted": "#5C6370",
-    "border": "#E4E2DC",
+    "border": "#D6D9DE",
+    "selection": "#E6F0EA",
     "accent": "#2F6F4F",
     "accent_contrast": "#FFFFFF",
     "focus": "#3B82F6",
@@ -29,11 +31,12 @@ LIGHT: dict[str, str] = {
 }
 
 DARK: dict[str, str] = {
-    "surface": "#1A1B1E",
-    "surface_raised": "#25262B",
+    "surface": "#161719",
+    "surface_raised": "#212327",
     "ink": "#ECECEC",
     "ink_muted": "#9AA0A8",
-    "border": "#34363B",
+    "border": "#34373E",
+    "selection": "#1F2A24",
     "accent": "#4CAF7D",
     "accent_contrast": "#0E1A13",
     "focus": "#60A5FA",
@@ -50,6 +53,7 @@ HIGH_CONTRAST: dict[str, str] = {
     "ink": "#FFFFFF",
     "ink_muted": "#FFFFFF",
     "border": "#FFFFFF",
+    "selection": "#333300",
     "accent": "#FFFF00",
     "accent_contrast": "#000000",
     "focus": "#00FFFF",
@@ -69,7 +73,7 @@ QLabel[muted="true"] { color: @ink_muted; }
 
 /* ── header & chrome ─────────────────────────────────────────── */
 QFrame#header { background-color: @surface; border-bottom: 1px solid @border; }
-QLabel#brand { font-size: 20px; font-weight: 600; color: @ink; }
+QLabel#brand { font-size: 20px; font-weight: 600; color: @accent; }
 QLabel#trustLine { color: @ink_muted; font-size: 12px; }
 QFrame#actionBar { background-color: @surface; border-top: 1px solid @border; }
 QLabel#statusLabel, QLabel#countLabel { color: @ink_muted; }
@@ -146,20 +150,72 @@ QLineEdit, QComboBox {
     background-color: @surface_raised;
     border: 1px solid @border;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 5px 8px;
+    selection-background-color: @selection;
+    selection-color: @ink;
 }
-QLineEdit:focus, QComboBox:focus { border: 2px solid @focus; }
+QLineEdit:focus, QComboBox:focus { border: 1px solid @focus; }
+QComboBox:hover { border-color: @accent; }
+QComboBox { padding-right: 26px; }
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 24px;
+    border: none;
+    background: transparent;
+}
+QComboBox::down-arrow { image: url(@chevron); width: 12px; height: 12px; }
+QComboBox QAbstractItemView {
+    background-color: @surface_raised;
+    border: 1px solid @border;
+    border-radius: 6px;
+    padding: 4px;
+    outline: none;
+    selection-background-color: @selection;
+    selection-color: @ink;
+}
+
+QMenu { background-color: @surface_raised; border: 1px solid @border; padding: 4px; }
+QMenu::item { padding: 6px 18px; border-radius: 4px; }
+QMenu::item:selected { background-color: @selection; color: @ink; }
+
+QListWidget::item:hover { background-color: @selection; }
 
 QPlainTextEdit#logPane { font-family: "JetBrains Mono", Consolas, monospace; }
 """
 
 
 def build_qss(tokens: dict[str, str]) -> str:
-    """Substitute ``@token`` placeholders in the template with token values."""
-    qss = _QSS_TEMPLATE
+    """Substitute ``@token`` placeholders in the template with token values.
+
+    ``@chevron`` is replaced with the path to a small SVG drop-down arrow tinted
+    with ``ink_muted`` (generated and cached per colour).
+    """
+    qss = _QSS_TEMPLATE.replace("@chevron", chevron_icon_path(tokens["ink_muted"]))
     for name, value in tokens.items():
         qss = qss.replace(f"@{name}", value)
     return qss.strip() + "\n"
+
+
+def chevron_icon_path(color: str, *, up: bool = False) -> str:
+    """Return a filesystem path (forward-slashed for QSS) to a chevron SVG tinted
+    ``color``, generating it in the cache the first time. ``up`` flips it."""
+    from unmsg import paths
+
+    cache = paths.cache_dir()
+    cache.mkdir(parents=True, exist_ok=True)
+    facing = "up" if up else "down"
+    target = cache / f"chevron-{facing}-{color.lstrip('#')}.svg"
+    if not target.exists():
+        path = "M2.5 7.5 L6 4 L9.5 7.5" if up else "M2.5 4.5 L6 8 L9.5 4.5"
+        target.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" '
+            f'viewBox="0 0 12 12"><path d="{path}" fill="none" '
+            f'stroke="{color}" stroke-width="1.6" stroke-linecap="round" '
+            'stroke-linejoin="round"/></svg>',
+            encoding="utf-8",
+        )
+    return target.as_posix()
 
 
 def tokens_for(theme: str, *, system_is_dark: bool) -> dict[str, str]:
