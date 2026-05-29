@@ -53,6 +53,14 @@ _STATE_LABEL = {
     "warning": "Converted with a note",
     "failed": "Couldn't convert",
 }
+# The status line takes the state's colour (queued stays muted).
+_STATE_TEXT_TOKEN = {
+    "queued": "ink_muted",
+    "working": "accent",
+    "done": "success",
+    "warning": "warning",
+    "failed": "error",
+}
 _ROW_HEIGHT = 56
 
 
@@ -120,7 +128,8 @@ class FileRowDelegate(QStyledItemDelegate):
         small = QFont(option.font)
         small.setPointSizeF(max(8.0, option.font.pointSizeF() - 1.0))
         painter.setFont(small)
-        painter.setPen(QColor(t["ink_muted"]))
+        status_token = _STATE_TEXT_TOKEN.get(state, "ink_muted")
+        painter.setPen(QColor(t.get(status_token, t["ink_muted"])))
         secondary_rect = rect.adjusted(text_left - rect.left(), 0, -16, -8)
         painter.drawText(
             secondary_rect,

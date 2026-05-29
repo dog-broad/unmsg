@@ -107,7 +107,18 @@ QLabel#heading { font-size: 20px; font-weight: 600; }
 QLabel[muted="true"] { color: @ink_muted; }
 
 /* ── header & chrome ─────────────────────────────────────────── */
-QFrame#header { background-color: @surface; border-bottom: 1px solid @border; }
+QFrame#header {
+    background-color: @surface;
+    border-top: 3px solid @accent;
+    border-bottom: 1px solid @border;
+}
+QLabel#appMark {
+    background-color: @accent;
+    color: @accent_contrast;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+}
 QLabel#brand { font-size: 20px; font-weight: 600; color: @ink; }
 QLabel#trustLine { color: @ink_muted; font-size: 12px; }
 QFrame#actionBar { background-color: @surface; border-top: 1px solid @border; }
@@ -150,6 +161,7 @@ QListWidget { background-color: @surface; border: none; outline: none; }
     border: 2px solid @accent;
     color: @ink;
 }
+QLabel#dropHeading { color: @accent; font-size: 16px; font-weight: 600; }
 QLabel#dropPrompt { color: @ink_muted; }
 
 /* ── buttons ─────────────────────────────────────────────────── */
