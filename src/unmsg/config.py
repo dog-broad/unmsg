@@ -34,6 +34,7 @@ class UIConfig(BaseModel):
     window_height: int = 680
     last_output_dir: str | None = None
     log_pane_collapsed: bool = True
+    first_run_done: bool = False
 
 
 class LoggingConfig(BaseModel):
