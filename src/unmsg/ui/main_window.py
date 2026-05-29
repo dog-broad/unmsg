@@ -12,10 +12,9 @@ import logging
 from pathlib import Path
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, QThread, QUrl
-from PySide6.QtGui import QColor, QDesktopServices, QIcon
+from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QFrame,
-    QGraphicsDropShadowEffect,
     QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
@@ -34,7 +33,7 @@ from unmsg.logging_setup import LOGGER_NAME
 from unmsg.ui.dialogs.error_details import ErrorDetailsDialog
 from unmsg.ui.dialogs.help import HelpDialog
 from unmsg.ui.dialogs.settings import SettingsDialog
-from unmsg.ui.theme import apply_theme, chevron_icon_path, tokens_for
+from unmsg.ui.theme import apply_theme, badge_palette, chevron_icon_path, tokens_for
 from unmsg.ui.widgets.drop_zone import DropZone
 from unmsg.ui.widgets.file_list import FileList, _reveal
 from unmsg.ui.widgets.log_pane import LogPane
@@ -125,7 +124,6 @@ class MainWindow(QMainWindow):
         self._stack = QStackedWidget()
         self._drop = DropZone()
         self._drop.paths_dropped.connect(self._add_paths)
-        _elevate(self._drop)
         self._files = FileList()
         self._stack.addWidget(self._wrap(self._drop))  # 0: empty
         self._stack.addWidget(self._build_list_page())  # 1: list
@@ -421,9 +419,11 @@ class MainWindow(QMainWindow):
             self._update_banner = None
 
     def _apply_list_tokens(self) -> None:
-        is_dark = self._config.ui.theme in ("dark", "high-contrast")
-        self._tokens = tokens_for(self._config.ui.theme, system_is_dark=is_dark)
+        theme = self._config.ui.theme
+        is_dark = theme in ("dark", "high-contrast")
+        self._tokens = tokens_for(theme, system_is_dark=is_dark)
         self._files.set_tokens(self._tokens)
+        self._files.set_badges(badge_palette(theme, system_is_dark=is_dark))
         self._refresh_options_chevron()
 
     def _persist(self) -> None:
@@ -467,12 +467,3 @@ def _result_formats(result: ConvertResult) -> list[str]:
 def _short_path(path: Path) -> str:
     text = str(path)
     return text if len(text) <= 40 else "…" + text[-39:]
-
-
-def _elevate(widget: QWidget) -> None:
-    """A soft drop shadow for gentle depth (subtle on dark themes)."""
-    shadow = QGraphicsDropShadowEffect(widget)
-    shadow.setBlurRadius(24)
-    shadow.setOffset(0, 3)
-    shadow.setColor(QColor(0, 0, 0, 38))
-    widget.setGraphicsEffect(shadow)
