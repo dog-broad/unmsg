@@ -47,10 +47,31 @@ def test_all_themes_have_a_selection_token():
         assert "selection" in tokens
 
 
-def test_surface_and_raised_differ_for_depth():
-    # the whole point of the pass: cards must read against the window background
-    assert LIGHT["surface"] != LIGHT["surface_raised"]
-    assert DARK["surface"] != DARK["surface_raised"]
+def test_borders_are_visible_against_surface():
+    # differentiation comes from borders, not a grey canvas
+    assert LIGHT["border"] != LIGHT["surface"]
+    assert DARK["border"] != DARK["surface"]
+
+
+def test_badge_palette_is_per_format_and_theme_aware():
+    from unmsg.ui.theme import badge_palette
+
+    light = badge_palette("light")
+    dark = badge_palette("dark")
+    # each format has a distinct colour; light and dark differ
+    assert light["pdf"] != light["md"] != light["html"]
+    assert light["pdf"] != dark["pdf"]
+    # every implemented format is covered
+    for fmt in ("md", "html", "html_single", "txt", "json", "eml", "pdf"):
+        bg, fg = light[fmt]
+        assert bg.startswith("#") and fg.startswith("#")
+
+
+def test_high_contrast_badges_are_uniform():
+    from unmsg.ui.theme import badge_palette
+
+    hc = badge_palette("high-contrast")
+    assert len(set(hc.values())) == 1  # one legible style
 
 
 def test_chevron_icon_generated_and_tinted(tmp_path, monkeypatch):
