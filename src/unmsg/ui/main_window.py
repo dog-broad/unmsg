@@ -210,7 +210,8 @@ class MainWindow(QMainWindow):
 
     def _refresh_options_chevron(self) -> None:
         color = self._tokens.get("ink_muted", "#5C6370")
-        up = self._options.isVisible()
+        # collapsed → up, expanded → down
+        up = not self._options.isVisible()
         self._options_bar.setIcon(QIcon(chevron_icon_path(color, up=up)))
         self._options_bar.setIconSize(QSize(12, 12))
 
