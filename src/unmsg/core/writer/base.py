@@ -22,6 +22,7 @@ class RenderContext:
     markdown_body: str
     html_body: str  # cleaned + cid-rewritten; asset refs are relative
     assets: dict[str, bytes]  # relpath -> bytes, for single-file inlining
+    cleaned_html: str = ""  # cleaned but cid: refs preserved (for the EML writer)
 
 
 @runtime_checkable
