@@ -25,7 +25,6 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QMenu,
-    QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
 )
@@ -76,10 +75,7 @@ class FileRowDelegate(QStyledItemDelegate):
         t = self._tokens
         rect = option.rect
 
-        flags = option.state
-        if flags & (QStyle.StateFlag.State_Selected | QStyle.StateFlag.State_MouseOver):
-            painter.fillRect(rect, QColor(t.get("selection", t["surface"])))
-        # hairline separator between rows
+        # hairline separator between rows (no background fill behind the text)
         painter.setPen(QColor(t["border"]))
         painter.drawLine(
             rect.left() + 16, rect.bottom(), rect.right() - 16, rect.bottom()

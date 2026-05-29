@@ -202,8 +202,6 @@ QTabBar::tab:selected { color: @ink; border-bottom: 2px solid @accent; }
 QCheckBox, QRadioButton { spacing: 8px; }
 QTabWidget QWidget { background-color: @surface_raised; }
 
-QListWidget::item:hover { background-color: @selection; }
-
 QPlainTextEdit#logPane { font-family: "JetBrains Mono", Consolas, monospace; }
 """
 
