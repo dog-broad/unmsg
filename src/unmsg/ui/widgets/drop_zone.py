@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDragEnterEvent, QDragLeaveEvent, QDropEvent, QMouseEvent
 from PySide6.QtWidgets import QFileDialog, QFrame, QLabel, QVBoxLayout
 
@@ -20,11 +20,20 @@ class DropZone(QFrame):
         self.setAcceptDrops(True)
         self.setMinimumHeight(180)
 
-        label = QLabel("Drop .msg files or folders here\n\nor click to browse", self)
+        label = QLabel(self)
+        label.setObjectName("dropPrompt")
+        label.setTextFormat(Qt.TextFormat.RichText)
+        label.setText(
+            "<div style='font-size:16px'>Drop .msg files or folders here</div>"
+            "<div style='margin-top:6px'>or click to browse</div>"
+            "<div style='margin-top:22px'>"
+            "Markdown &middot; HTML &middot; PDF &middot; text &middot; JSON "
+            "&middot; EML</div>"
+        )
         label.setWordWrap(True)
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout = QVBoxLayout(self)
-        layout.addWidget(label)
-        label.setAlignment(label.alignment())
+        layout.addWidget(label, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def _set_drag_active(self, active: bool) -> None:
         self.setProperty("dragActive", active)
