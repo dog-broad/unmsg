@@ -15,7 +15,8 @@ from rich.console import Console
 
 from unmsg._version import __version__
 from unmsg.core import ConvertOptions, convert_batch
-from unmsg.core.models import ConvertResult, FormatId, InlineMode
+from unmsg.core.manifest import write_manifest
+from unmsg.core.models import ConvertResult, FormatId, InlineMode, OnConflict
 
 app = typer.Typer(
     add_completion=False,
@@ -86,6 +87,20 @@ def convert(
         str,
         typer.Option(help="Inline images: extract, base64, or skip."),
     ] = "extract",
+    naming: Annotated[
+        str,
+        typer.Option(help="Output naming template, e.g. {date}_{subject}."),
+    ] = "{date}_{subject}",
+    on_conflict: Annotated[
+        str,
+        typer.Option(
+            "--on-conflict", help="When a name exists: rename, overwrite, skip."
+        ),
+    ] = "rename",
+    manifest: Annotated[
+        bool,
+        typer.Option(help="Write manifest.json (with checksums) at the output root."),
+    ] = True,
 ) -> None:
     """Convert one or more .msg files."""
     sources = _discover(paths)
@@ -98,12 +113,16 @@ def convert(
             formats=_parse_formats(formats),
             attachments=attachments,
             inline_images=_parse_inline(inline),
+            naming_template=naming.strip() or "{date}_{subject}",
+            on_conflict=_parse_on_conflict(on_conflict),
         )
     except ValueError as exc:
         err_console.print(f"[red]{exc}[/]")
         raise typer.Exit(EXIT_FAILED) from None
 
     results = convert_batch(sources, output, opts, progress=_progress)
+    if manifest and results:
+        write_manifest(results, output)
     raise typer.Exit(_summarize(results))
 
 
@@ -131,6 +150,13 @@ def _parse_inline(raw: str) -> InlineMode:
     value = raw.strip().lower()
     if value not in ("extract", "base64", "skip"):
         raise ValueError("Inline mode must be extract, base64, or skip.")
+    return value  # type: ignore[return-value]
+
+
+def _parse_on_conflict(raw: str) -> OnConflict:
+    value = raw.strip().lower()
+    if value not in ("rename", "overwrite", "skip"):
+        raise ValueError("On-conflict must be rename, overwrite, or skip.")
     return value  # type: ignore[return-value]
 
 

@@ -93,6 +93,7 @@ def _convert_record(
         markdown_body=markdown_body,
         html_body=html_body,
         assets=assets,
+        cleaned_html=cleaned,
     )
 
     output_paths: list[Path] = []

@@ -6,6 +6,25 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0]
+
+For scripters and archivists: a fuller command line, a stable Python API, batch
+manifests with checksums, and EML output.
+
+### Added
+
+- **EML output** — reconstructs a self-contained `.eml` (multipart/related with a
+  plain-text alternative); inline images are preserved by Content-ID so they
+  render in a mail client.
+- **Per-batch manifest** — `manifest.json` written at the output root by default
+  (`--no-manifest` to skip), listing each message's outputs with SHA-256, using
+  relative paths and no timestamp so identical runs produce identical manifests.
+- **More CLI options** — `--naming` (output template), `--on-conflict`
+  (rename / overwrite / skip), and `--manifest/--no-manifest`. Exit codes remain
+  `0` success, `1` partial, `2` failed, `3` no input.
+- **Documented, stable Python API** — `convert_file`, `convert_batch`,
+  `ConvertOptions`, `ConvertResult`, and the data model, importable from `unmsg`.
+
 ## [0.3.2]
 
 ### Fixed
@@ -115,7 +134,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/dog-broad/unmsg/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/dog-broad/unmsg/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/dog-broad/unmsg/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dog-broad/unmsg/compare/v0.2.0...v0.3.0
