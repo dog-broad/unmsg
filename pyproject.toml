@@ -50,6 +50,9 @@ dev = [
 [project.scripts]
 unmsg = "unmsg.cli:app"
 
+[project.gui-scripts]
+unmsg-gui = "unmsg.ui.app:run"
+
 [project.urls]
 Homepage = "https://github.com/dog-broad/unmsg"
 Source = "https://github.com/dog-broad/unmsg"
