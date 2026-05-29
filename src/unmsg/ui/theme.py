@@ -67,24 +67,53 @@ QWidget {
 QLabel#heading { font-size: 20px; font-weight: 600; }
 QLabel[muted="true"] { color: @ink_muted; }
 
-QFrame#card, QListWidget, QPlainTextEdit {
+/* ── header & chrome ─────────────────────────────────────────── */
+QFrame#header { background-color: @surface; border-bottom: 1px solid @border; }
+QLabel#brand { font-size: 20px; font-weight: 600; color: @ink; }
+QLabel#trustLine { color: @ink_muted; font-size: 12px; }
+QFrame#actionBar { background-color: @surface; border-top: 1px solid @border; }
+QLabel#statusLabel, QLabel#countLabel { color: @ink_muted; }
+QFrame#updateBanner {
+    background-color: @surface_raised; border-bottom: 1px solid @border;
+}
+
+/* ── slim top progress line ──────────────────────────────────── */
+QProgressBar#topProgress { background-color: @surface; border: none; }
+QProgressBar#topProgress::chunk { background-color: @accent; }
+
+/* ── options summary bar (expands the panel) ─────────────────── */
+QPushButton#optionsBar {
+    text-align: left;
+    background-color: @surface;
+    border: none;
+    border-top: 1px solid @border;
+    color: @ink_muted;
+    padding: 10px 24px;
+    font-size: 13px;
+}
+QPushButton#optionsBar:hover { color: @ink; }
+QPushButton#optionsBar:focus { color: @ink; }
+
+QFrame#card, QPlainTextEdit {
     background-color: @surface_raised;
     border: 1px solid @border;
     border-radius: 6px;
 }
+QListWidget { background-color: @surface; border: none; outline: none; }
 
 #dropZone {
     background-color: @surface_raised;
     border: 2px dashed @border;
     border-radius: 10px;
     color: @ink_muted;
-    font-size: 16px;
 }
 #dropZone[dragActive="true"] {
     border: 2px solid @accent;
     color: @ink;
 }
+QLabel#dropPrompt { color: @ink_muted; }
 
+/* ── buttons ─────────────────────────────────────────────────── */
 QPushButton {
     background-color: @surface_raised;
     border: 1px solid @border;
@@ -93,13 +122,25 @@ QPushButton {
 }
 QPushButton:hover { border-color: @accent; }
 QPushButton:focus { border: 2px solid @focus; }
+
 QPushButton#cta {
     background-color: @accent;
     color: @accent_contrast;
     border: none;
+    border-radius: 6px;
+    padding: 8px 22px;
     font-weight: 600;
 }
 QPushButton#cta:disabled { background-color: @border; color: @ink_muted; }
+
+QPushButton#ghost {
+    background-color: transparent;
+    border: none;
+    color: @ink_muted;
+    padding: 6px 10px;
+}
+QPushButton#ghost:hover { color: @accent; }
+QPushButton#ghost:focus { color: @ink; border: none; }
 
 QLineEdit, QComboBox {
     background-color: @surface_raised;
@@ -108,14 +149,6 @@ QLineEdit, QComboBox {
     padding: 4px 8px;
 }
 QLineEdit:focus, QComboBox:focus { border: 2px solid @focus; }
-
-QProgressBar {
-    border: 1px solid @border;
-    border-radius: 6px;
-    text-align: center;
-    background-color: @surface_raised;
-}
-QProgressBar::chunk { background-color: @accent; border-radius: 5px; }
 
 QPlainTextEdit#logPane { font-family: "JetBrains Mono", Consolas, monospace; }
 """

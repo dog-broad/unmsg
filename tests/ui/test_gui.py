@@ -47,9 +47,16 @@ def test_file_list_state_transitions(qtbot, tmp_path):
     qtbot.addWidget(widget)
     path = tmp_path / "x.msg"
     widget.add_paths([path])
-    widget.set_state(path, "done", bundle=tmp_path)
-    item = widget.item(0)
-    assert "✓" in item.text()
+    assert widget.row_state(0) == "queued"
+    widget.set_state(
+        path,
+        "done",
+        bundle=tmp_path / "2024-03-15_x",
+        identity="2024-03-15_x",
+        formats=["md", "html"],
+    )
+    assert widget.row_state(0) == "done"
+    assert widget.row_primary(0) == "2024-03-15_x"
 
 
 def test_conversion_completes_and_writes_output(
@@ -76,7 +83,8 @@ def test_conversion_completes_and_writes_output(
     qtbot.waitUntil(lambda: win._thread is None, timeout=8000)
 
     assert (out / "2024-03-15_Quarterly Report.md").exists()
-    assert "✓" in win._files.item(0).text()
+    assert win._files.row_state(0) == "done"
+    assert win._phase == "done"
 
 
 def test_settings_round_trip(qtbot):
