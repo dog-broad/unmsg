@@ -6,6 +6,15 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.5]
+
+### Changed
+
+- File rows no longer get a tinted background behind the text — only the
+  format badges are filled. Cleaner, less busy.
+- The options bar's chevron direction is corrected (points up when collapsed,
+  down when expanded).
+
 ## [0.5.4]
 
 ### Changed
@@ -223,7 +232,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/dog-broad/unmsg/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/dog-broad/unmsg/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/dog-broad/unmsg/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/dog-broad/unmsg/compare/v0.5.1...v0.5.2
