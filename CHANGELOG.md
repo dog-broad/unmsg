@@ -6,6 +6,25 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.1]
+
+A ground-up rethink of the desktop window — calmer, clearer, and more honest
+about what it's doing.
+
+### Changed
+
+- The window is now a single, calm column instead of a control panel. There is
+  always exactly **one primary action** that changes with the moment —
+  **Convert → Cancel → Open output** — so the next step is never in doubt.
+- Output options collapse into a **one-line summary bar** that expands only when
+  you want it; sensible defaults mean most people never open it.
+- Each file row now shows the **message's identity** — once converted, its
+  output name (date and subject) — with a coloured status dot and small chips
+  for the formats produced, instead of a bare filename.
+- Conversion progress is a **slim line under the header**, not a heavy bar.
+- The privacy promise lives in the header, always visible.
+- The empty state says what UnMsg produces (Markdown, HTML, PDF, …).
+
 ## [0.5.0]
 
 Performance, resilience, accessibility — and PDF.
@@ -164,7 +183,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/dog-broad/unmsg/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/dog-broad/unmsg/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/dog-broad/unmsg/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/dog-broad/unmsg/compare/v0.3.1...v0.3.2
