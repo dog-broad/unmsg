@@ -7,6 +7,8 @@ import pytest
 pytest.importorskip("PySide6")
 
 from unmsg.config import Config
+from unmsg.ui.dialogs.first_run import FirstRunDialog
+from unmsg.ui.dialogs.help import HelpDialog
 from unmsg.ui.dialogs.settings import SettingsDialog
 from unmsg.ui.main_window import MainWindow
 from unmsg.ui.widgets.file_list import FileList
@@ -79,3 +81,25 @@ def test_telemetry_stays_off_through_settings(qtbot):
     qtbot.addWidget(dialog)
     dialog.accept()
     assert config.advanced.telemetry is False
+
+
+def test_first_run_and_help_dialogs_construct(qtbot):
+    first = FirstRunDialog()
+    qtbot.addWidget(first)
+    first.accept()
+    assert first.result() == first.DialogCode.Accepted
+
+    help_dialog = HelpDialog()
+    qtbot.addWidget(help_dialog)
+    assert help_dialog.windowTitle() == "UnMsg Help"
+
+
+def test_update_banner_shows_once_and_dismisses(qtbot):
+    win = MainWindow(Config())
+    qtbot.addWidget(win)
+    assert win._update_banner is None
+    win.show_update_banner("9.9.9", "https://example.com/releases")
+    assert win._update_banner is not None
+    win.show_update_banner("9.9.9", "https://example.com/releases")  # idempotent
+    win._dismiss_update_banner()
+    assert win._update_banner is None
