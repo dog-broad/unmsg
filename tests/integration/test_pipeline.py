@@ -72,15 +72,6 @@ def test_regular_attachment_saved(monkeypatch, tmp_path, make_record, file_attac
     assert (result.bundle_dir / "attachments" / "budget.pdf").exists()
 
 
-def test_unsupported_format_warns(monkeypatch, tmp_path, make_record):
-    _patch_reader(monkeypatch, make_record())
-    src = tmp_path / "in.msg"
-    src.write_bytes(b"x")
-    result = convert_file(src, tmp_path / "out", ConvertOptions(formats=("md", "pdf")))
-    assert result.status == "warning"
-    assert any("pdf" in w for w in result.warnings)
-
-
 def test_nested_message_converted_under_attachments(monkeypatch, tmp_path, make_record):
     inner = make_record(subject="Inner Memo", attachments=[])
     outer = make_record(
@@ -179,6 +170,28 @@ def test_deeply_nested_messages_stop(monkeypatch, tmp_path, make_record):
     src.write_bytes(b"x")
     result = convert_file(src, tmp_path / "out", ConvertOptions(formats=("md",)))
     assert any("deeply nested" in w for w in result.warnings)
+
+
+def test_unavailable_format_degrades_to_warning(monkeypatch, tmp_path, make_record):
+    from unmsg.core.writer import get_writer
+    from unmsg.core.writer.base import WriterUnavailable
+
+    def unavailable(_ctx):
+        raise WriterUnavailable("PDF output needs the optional 'pdf' feature.")
+
+    monkeypatch.setattr(get_writer("pdf"), "render", unavailable)
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "in.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+
+    result = convert_file(src, out, ConvertOptions(formats=("md", "pdf")))
+    assert result.status == "warning"
+    assert any("pdf" in w.lower() for w in result.warnings)
+    # the other format still landed
+    assert (
+        out / "2024-03-15_Quarterly Report" / "2024-03-15_Quarterly Report.md"
+    ).exists()
 
 
 def test_convert_stage_error_is_humanised(monkeypatch, tmp_path, make_record):

@@ -20,7 +20,7 @@ from unmsg.core.models import ConvertResult, MsgRecord, Status
 from unmsg.core.naming import fit_within_budget, stem_for
 from unmsg.core.options import ConvertOptions
 from unmsg.core.reader import read_msg
-from unmsg.core.writer import RenderContext, get_writer
+from unmsg.core.writer import RenderContext, WriterUnavailable, get_writer
 
 logger = logging.getLogger("unmsg.core")
 
@@ -118,7 +118,15 @@ def _convert_record(
         if writer is None:
             warnings.append(f"The '{fmt}' format isn't available yet — skipped.")
             continue
-        data = writer.render(ctx)
+        try:
+            data = writer.render(ctx)
+        except WriterUnavailable as exc:
+            warnings.append(str(exc))
+            continue
+        except Exception as exc:
+            logger.debug("writer %s failed", fmt, exc_info=exc)
+            warnings.append(f"Couldn't produce the {fmt} output for this message.")
+            continue
         dest = _resolve_conflict(bundle_dir / f"{stem}{writer.extension}", opts)
         if dest is None:
             warnings.append(f"Skipped existing {fmt} output.")
