@@ -6,6 +6,27 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.1]
+
+Fixes found by converting a real Outlook message.
+
+### Fixed
+
+- Messages whose fields carried trailing NUL characters (common in `.msg`
+  string data) no longer crash conversion; subjects, attachment names, and
+  inline-image references are cleaned.
+- Send/receive dates provided as text are now parsed, so output folders are
+  dated correctly instead of falling back to "undated".
+- Recipient lists are split correctly when display names contain `;` or `,`
+  (e.g. "Surname, Given (Org)") — each person is one entry with the right
+  address.
+- A problem while writing output now shows a friendly message instead of a raw
+  error.
+
+### Changed
+
+- Version reporting now reflects the released version.
+
 ## [0.3.0]
 
 Ready for a non-technical Windows user: a real installer, a gentle first run, and
@@ -86,7 +107,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/dog-broad/unmsg/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dog-broad/unmsg/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dog-broad/unmsg/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dog-broad/unmsg/releases/tag/v0.1.0
