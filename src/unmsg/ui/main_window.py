@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, QThread, QUrl
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QSize, Qt, QThread, QUrl
 from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QFrame,
@@ -93,6 +93,11 @@ class MainWindow(QMainWindow):
         layout.setSpacing(2)
 
         top = QHBoxLayout()
+        top.setSpacing(10)
+        mark = QLabel("U")
+        mark.setObjectName("appMark")
+        mark.setFixedSize(26, 26)
+        mark.setAlignment(Qt.AlignmentFlag.AlignCenter)
         brand = QLabel("UnMsg")
         brand.setObjectName("brand")
         settings = QPushButton("Settings")
@@ -101,6 +106,7 @@ class MainWindow(QMainWindow):
         help_button = QPushButton("Help")
         help_button.setObjectName("ghost")
         help_button.clicked.connect(self._open_help)
+        top.addWidget(mark)
         top.addWidget(brand)
         top.addStretch(1)
         top.addWidget(settings)

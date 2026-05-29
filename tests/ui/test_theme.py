@@ -96,6 +96,16 @@ def test_build_qss_resolves_chevron_into_combobox(monkeypatch, tmp_path):
     assert ".svg" in qss
 
 
+def test_color_accents_present_in_qss(monkeypatch, tmp_path):
+    import unmsg.paths as paths
+
+    monkeypatch.setattr(paths, "cache_dir", lambda: tmp_path)
+    qss = build_qss(LIGHT)
+    assert "QLabel#appMark" in qss  # coloured brand mark
+    assert "QLabel#dropHeading" in qss  # accent empty-state heading
+    assert "border-top: 3px solid" in qss  # accent top strip
+
+
 def test_tabs_are_themed_so_text_is_visible(monkeypatch, tmp_path):
     import unmsg.paths as paths
 

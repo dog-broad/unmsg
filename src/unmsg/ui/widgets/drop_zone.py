@@ -20,20 +20,23 @@ class DropZone(QFrame):
         self.setAcceptDrops(True)
         self.setMinimumHeight(180)
 
-        label = QLabel(self)
-        label.setObjectName("dropPrompt")
-        label.setTextFormat(Qt.TextFormat.RichText)
-        label.setText(
-            "<div style='font-size:16px'>Drop .msg files or folders here</div>"
-            "<div style='margin-top:6px'>or click to browse</div>"
-            "<div style='margin-top:22px'>"
-            "Markdown &middot; HTML &middot; PDF &middot; text &middot; JSON "
-            "&middot; EML</div>"
-        )
-        label.setWordWrap(True)
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        heading = QLabel("Drop .msg files or folders here", self)
+        heading.setObjectName("dropHeading")
+        sub = QLabel("or click to browse", self)
+        sub.setObjectName("dropPrompt")
+        formats = QLabel("Markdown · HTML · PDF · text · JSON · EML", self)
+        formats.setObjectName("dropPrompt")
+        for widget in (heading, sub, formats):
+            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         layout = QVBoxLayout(self)
-        layout.addWidget(label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch(1)
+        layout.addWidget(heading, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addSpacing(4)
+        layout.addWidget(sub, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addSpacing(20)
+        layout.addWidget(formats, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch(1)
 
     def _set_drag_active(self, active: bool) -> None:
         self.setProperty("dragActive", active)
