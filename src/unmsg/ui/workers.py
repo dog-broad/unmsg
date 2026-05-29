@@ -14,6 +14,7 @@ from PySide6.QtCore import QObject, Signal, Slot
 
 from unmsg.core import ConvertOptions, convert_file
 from unmsg.core.models import ConvertResult
+from unmsg.updates import check_for_update
 
 
 class BatchWorker(QObject):
@@ -46,3 +47,17 @@ class BatchWorker(QObject):
             self.file_result.emit(result)
             self.progress.emit(index, total, source.name)
         self.finished.emit(results)
+
+
+class UpdateWorker(QObject):
+    """Runs the opt-in update check off the GUI thread."""
+
+    found = Signal(str, str)  # latest version, download url
+    finished = Signal()
+
+    @Slot()
+    def run(self) -> None:
+        info = check_for_update()
+        if info is not None and info.is_newer:
+            self.found.emit(info.latest, info.url)
+        self.finished.emit()
