@@ -2,7 +2,19 @@
 
 from __future__ import annotations
 
-from unmsg.core.html_cleanup import clean_html, rewrite_cids
+from unmsg.core.html_cleanup import clean_html, rewrite_cids, to_text
+
+
+def test_to_text_strips_tags_and_keeps_content():
+    out = to_text("<p>Hello</p><p>World <b>now</b></p>")
+    assert "Hello" in out
+    assert "World" in out
+    assert "now" in out
+    assert "<" not in out
+
+
+def test_to_text_empty():
+    assert to_text("") == ""
 
 
 def test_clean_removes_script_and_style():

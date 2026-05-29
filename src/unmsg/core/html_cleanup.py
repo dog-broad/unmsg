@@ -38,6 +38,26 @@ def clean_html(html: str) -> str:
     return fragment.strip()
 
 
+def to_text(html: str) -> str:
+    """Extract readable plain text from HTML (for messages with no text body)."""
+    if not html.strip():
+        return ""
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text("\n")
+    out: list[str] = []
+    blanks = 0
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped:
+            blanks = 0
+            out.append(stripped)
+        else:
+            blanks += 1
+            if blanks <= 1:
+                out.append("")
+    return "\n".join(out).strip()
+
+
 def rewrite_cids(html: str, cid_map: dict[str, str]) -> str:
     """Rewrite ``cid:`` references to the relative paths in ``cid_map``.
 
