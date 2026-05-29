@@ -48,7 +48,7 @@ class SettingsDialog(QDialog):
         page = QWidget()
         form = QFormLayout(page)
         self._theme = QComboBox()
-        self._theme.addItems(["system", "light", "dark"])
+        self._theme.addItems(["system", "light", "dark", "high-contrast"])
         self._theme.setCurrentText(self._config.ui.theme)
         form.addRow("Theme", self._theme)
         return page

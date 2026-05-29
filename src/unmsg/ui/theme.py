@@ -42,6 +42,22 @@ DARK: dict[str, str] = {
     "success": "#6BD68F",
 }
 
+# Maximum-contrast set: pure black/white with a vivid accent and a distinct
+# focus colour. Status colours stay saturated and legible on black.
+HIGH_CONTRAST: dict[str, str] = {
+    "surface": "#000000",
+    "surface_raised": "#000000",
+    "ink": "#FFFFFF",
+    "ink_muted": "#FFFFFF",
+    "border": "#FFFFFF",
+    "accent": "#FFFF00",
+    "accent_contrast": "#000000",
+    "focus": "#00FFFF",
+    "error": "#FF5555",
+    "warning": "#FFD400",
+    "success": "#00FF7F",
+}
+
 _QSS_TEMPLATE = """
 QWidget {
     background-color: @surface;
@@ -115,6 +131,8 @@ def build_qss(tokens: dict[str, str]) -> str:
 
 def tokens_for(theme: str, *, system_is_dark: bool) -> dict[str, str]:
     """Pick the token set for a theme name (``system`` follows the OS)."""
+    if theme == "high-contrast":
+        return HIGH_CONTRAST
     if theme == "dark":
         return DARK
     if theme == "light":
