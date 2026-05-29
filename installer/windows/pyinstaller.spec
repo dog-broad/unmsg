@@ -6,13 +6,19 @@
 # Produces dist/UnMsg/UnMsg.exe and its support files. onedir (not onefile) is
 # deliberate: faster cold start and fewer antivirus false positives.
 
+import os
+
 from PyInstaller.utils.hooks import collect_submodules
+
+# SPECPATH is this file's directory; the repo root is two levels up.
+ROOT = os.path.abspath(os.path.join(SPECPATH, "..", ".."))
+SRC = os.path.join(ROOT, "src")
 
 hiddenimports = collect_submodules("unmsg")
 
 a = Analysis(
-    ["src/unmsg/ui/app.py"],
-    pathex=["src"],
+    [os.path.join(SRC, "unmsg", "ui", "app.py")],
+    pathex=[SRC],
     binaries=[],
     datas=[],
     hiddenimports=hiddenimports,
