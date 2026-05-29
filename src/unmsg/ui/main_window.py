@@ -5,8 +5,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QThread
 from PySide6.QtWidgets import (
+    QGraphicsOpacityEffect,
     QHBoxLayout,
     QMainWindow,
     QPushButton,
@@ -131,7 +132,24 @@ class MainWindow(QMainWindow):
         self._update_view()
 
     def _update_view(self) -> None:
-        self._stack.setCurrentIndex(1 if self._files.count() else 0)
+        target = 1 if self._files.count() else 0
+        if self._stack.currentIndex() == target:
+            return
+        self._stack.setCurrentIndex(target)
+        self._fade_in(self._stack.currentWidget())
+
+    def _fade_in(self, widget: QWidget) -> None:
+        """A brief settle fade when the empty state and the list swap."""
+        effect = QGraphicsOpacityEffect(widget)
+        widget.setGraphicsEffect(effect)
+        anim = QPropertyAnimation(effect, b"opacity", self)
+        anim.setDuration(240)  # "settle" duration
+        anim.setStartValue(0.0)
+        anim.setEndValue(1.0)
+        anim.setEasingCurve(QEasingCurve.Type.OutCubic)
+        anim.finished.connect(lambda: widget.setGraphicsEffect(None))
+        self._anim = anim  # keep a reference so it isn't garbage-collected
+        anim.start()
 
     # ---- conversion -----------------------------------------------------
 
