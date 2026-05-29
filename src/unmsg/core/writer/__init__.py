@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-from unmsg.core.writer.base import FormatWriter, RenderContext
+from unmsg.core.writer.base import FormatWriter, RenderContext, WriterUnavailable
 from unmsg.core.writer.eml import EmlWriter
 from unmsg.core.writer.html import HtmlWriter
 from unmsg.core.writer.html_single import SingleFileHtmlWriter
 from unmsg.core.writer.json_meta import JsonMetadataWriter
 from unmsg.core.writer.md import MarkdownWriter
+from unmsg.core.writer.pdf import PdfWriter
 from unmsg.core.writer.txt import TextWriter
 
-# Implemented format ids. PDF arrives in a later release and is intentionally
-# absent rather than stubbed.
+# All format ids are implemented. `pdf` needs the optional [pdf] extra at render
+# time and reports a friendly message if it isn't installed.
 _WRITERS: dict[str, FormatWriter] = {
     w.format_id: w
     for w in (
@@ -21,6 +22,7 @@ _WRITERS: dict[str, FormatWriter] = {
         TextWriter(),
         JsonMetadataWriter(),
         EmlWriter(),
+        PdfWriter(),
     )
 }
 
@@ -37,6 +39,7 @@ def supported_formats() -> tuple[str, ...]:
 __all__ = [
     "FormatWriter",
     "RenderContext",
+    "WriterUnavailable",
     "get_writer",
     "supported_formats",
 ]

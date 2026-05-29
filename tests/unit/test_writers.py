@@ -58,5 +58,5 @@ def test_single_file_inlines_assets(make_record, inline_image):
     assert base64.b64encode(png).decode("ascii") in out
 
 
-def test_unsupported_format_returns_none():
-    assert get_writer("pdf") is None
+def test_unknown_format_returns_none():
+    assert get_writer("docx") is None

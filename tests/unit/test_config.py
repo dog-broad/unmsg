@@ -27,11 +27,12 @@ def test_save_and_load_round_trip(tmp_path):
     assert loaded.output.formats == ["md", "txt", "json"]
 
 
-def test_telemetry_is_forced_off(tmp_path):
+def test_legacy_telemetry_field_is_ignored(tmp_path):
+    # Old configs may still carry a telemetry flag; it's simply ignored now.
     path = tmp_path / "config.json"
     path.write_text(json.dumps({"advanced": {"telemetry": True}}), encoding="utf-8")
     cfg = load_config(path)
-    assert cfg.advanced.telemetry is False
+    assert not hasattr(cfg.advanced, "telemetry")
 
 
 def test_corrupt_file_yields_defaults(tmp_path):

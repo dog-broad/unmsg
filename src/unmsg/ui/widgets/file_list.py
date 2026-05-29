@@ -64,6 +64,16 @@ class FileList(QListWidget):
         for item in self.selectedItems():
             self.takeItem(self.row(item))
 
+    def set_filter(self, text: str) -> None:
+        """Hide rows whose file name doesn't contain ``text`` (case-insensitive)."""
+        needle = text.strip().lower()
+        for row in range(self.count()):
+            name = self._path(row).name.lower()
+            self.item(row).setHidden(bool(needle) and needle not in name)
+
+    def visible_count(self) -> int:
+        return sum(1 for row in range(self.count()) if not self.item(row).isHidden())
+
     def _path(self, row: int) -> Path:
         return Path(self.item(row).data(_PATH_ROLE))
 

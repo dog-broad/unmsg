@@ -101,12 +101,39 @@ def convert(
         bool,
         typer.Option(help="Write manifest.json (with checksums) at the output root."),
     ] = True,
+    jobs: Annotated[
+        int,
+        typer.Option(
+            "-j", "--jobs", min=1, help="Convert with this many worker processes."
+        ),
+    ] = 1,
+    timeout: Annotated[
+        float,
+        typer.Option(
+            min=0.0, help="Give up on a single message after N seconds (0 = no limit)."
+        ),
+    ] = 0.0,
+    resume: Annotated[
+        bool,
+        typer.Option(help="Skip messages already converted (per the manifest)."),
+    ] = False,
 ) -> None:
     """Convert one or more .msg files."""
     sources = _discover(paths)
     if not sources:
         err_console.print("[yellow]No .msg files found in what you gave me.[/]")
         raise typer.Exit(EXIT_NO_INPUT)
+
+    carried: list[dict[str, object]] = []
+    if resume:
+        from unmsg.resume import plan_resume
+
+        sources, carried = plan_resume(sources, output)
+        if carried:
+            console.print(f"  resuming — skipping {len(carried)} already done")
+        if not sources:
+            console.print("[green]Nothing to do — everything is already converted.[/]")
+            raise typer.Exit(EXIT_OK)
 
     try:
         opts = ConvertOptions(
@@ -120,9 +147,16 @@ def convert(
         err_console.print(f"[red]{exc}[/]")
         raise typer.Exit(EXIT_FAILED) from None
 
-    results = convert_batch(sources, output, opts, progress=_progress)
-    if manifest and results:
-        write_manifest(results, output)
+    if jobs > 1 or timeout > 0:
+        from unmsg.parallel import convert_batch_parallel
+
+        results = convert_batch_parallel(
+            sources, output, opts, jobs=jobs, timeout=timeout, progress=_progress
+        )
+    else:
+        results = convert_batch(sources, output, opts, progress=_progress)
+    if manifest and (results or carried):
+        write_manifest(results, output, carried=carried)
     raise typer.Exit(_summarize(results))
 
 
@@ -172,9 +206,11 @@ def _summarize(results: list[ConvertResult]) -> int:
     console.print()
     console.print(f"[green]Converted {done} of {len(results)} message(s).[/]")
     for result in warned:
-        console.print(f"  [yellow]⚠ {result.source.name}[/]: {result.warnings[0]}")
+        console.print(
+            f"  [yellow]warning[/] {result.source.name}: {result.warnings[0]}"
+        )
     for result in failed:
-        console.print(f"  [red]✗ {result.source.name}[/]: {result.error}")
+        console.print(f"  [red]failed[/] {result.source.name}: {result.error}")
 
     if failed and len(failed) == len(results):
         return EXIT_FAILED

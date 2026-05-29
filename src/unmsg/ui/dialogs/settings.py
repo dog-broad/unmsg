@@ -48,7 +48,7 @@ class SettingsDialog(QDialog):
         page = QWidget()
         form = QFormLayout(page)
         self._theme = QComboBox()
-        self._theme.addItems(["system", "light", "dark"])
+        self._theme.addItems(["system", "light", "dark", "high-contrast"])
         self._theme.setCurrentText(self._config.ui.theme)
         form.addRow("Theme", self._theme)
         return page
@@ -70,12 +70,6 @@ class SettingsDialog(QDialog):
         self._parallel.setRange(1, 64)
         self._parallel.setValue(self._config.advanced.max_parallel)
         form.addRow("Max parallel files", self._parallel)
-
-        telemetry = QCheckBox("Send anonymous usage data")
-        telemetry.setChecked(False)
-        telemetry.setEnabled(False)
-        form.addRow(telemetry)
-        form.addRow(_muted("UnMsg never sends anything — this stays off."))
         return page
 
     def _about_tab(self) -> QWidget:

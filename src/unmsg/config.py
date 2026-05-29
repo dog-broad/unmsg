@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from unmsg import paths
 from unmsg.core.models import FormatId, InlineMode, OnConflict
@@ -44,14 +44,8 @@ class LoggingConfig(BaseModel):
 
 class AdvancedConfig(BaseModel):
     max_parallel: int = 1
-    file_timeout_seconds: int = 0  # 0 = no timeout (until the performance release)
+    file_timeout_seconds: int = 0  # 0 = no timeout
     check_updates: bool = False  # opt-in; the only outbound network call
-    telemetry: bool = False  # locked off — see validator below
-
-    @field_validator("telemetry")
-    @classmethod
-    def _telemetry_is_always_off(cls, _value: bool) -> bool:
-        return False
 
 
 class Config(BaseModel):

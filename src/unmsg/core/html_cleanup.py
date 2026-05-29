@@ -38,6 +38,26 @@ def clean_html(html: str) -> str:
     return fragment.strip()
 
 
+_PRESENTATION_ATTRS = ("style", "class", "bgcolor", "color", "background")
+
+
+def strip_presentation(html: str) -> str:
+    """Remove inline styling attributes, keeping structure and links/images.
+
+    Outlook HTML carries CSS (e.g. ``currentcolor``) that simple PDF engines
+    can't parse; dropping presentational attributes yields plain, valid markup
+    that still preserves headings, tables, lists, images, and links.
+    """
+    if not html.strip():
+        return ""
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup.find_all(True):
+        for attr in _PRESENTATION_ATTRS:
+            if attr in tag.attrs:
+                del tag[attr]
+    return str(soup)
+
+
 def to_text(html: str) -> str:
     """Extract readable plain text from HTML (for messages with no text body)."""
     if not html.strip():

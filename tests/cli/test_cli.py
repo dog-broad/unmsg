@@ -49,8 +49,11 @@ def test_warning_conversion_returns_1(monkeypatch, tmp_path, make_record):
     _patch_reader(monkeypatch, make_record())
     src = tmp_path / "a.msg"
     src.write_bytes(b"x")
+    out = tmp_path / "out"
+    # First run succeeds; a second run with --on-conflict skip warns (exit 1).
+    runner.invoke(app, ["convert", str(src), "-o", str(out), "-f", "md"])
     result = runner.invoke(
-        app, ["convert", str(src), "-o", str(tmp_path / "out"), "-f", "md,pdf"]
+        app, ["convert", str(src), "-o", str(out), "-f", "md", "--on-conflict", "skip"]
     )
     assert result.exit_code == 1
 
@@ -105,6 +108,22 @@ def test_invalid_on_conflict_returns_2(monkeypatch, tmp_path, make_record):
         ["convert", str(src), "-o", str(tmp_path / "out"), "--on-conflict", "bogus"],
     )
     assert result.exit_code == 2
+
+
+def test_resume_skips_already_converted(monkeypatch, tmp_path, make_record):
+    _patch_reader(monkeypatch, make_record())
+    src = tmp_path / "a.msg"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    # First run produces output + manifest.
+    first = runner.invoke(app, ["convert", str(src), "-o", str(out), "-f", "md"])
+    assert first.exit_code == 0
+    # Second run with --resume finds nothing to do.
+    second = runner.invoke(
+        app, ["convert", str(src), "-o", str(out), "-f", "md", "--resume"]
+    )
+    assert second.exit_code == 0
+    assert "already converted" in second.stdout.lower()
 
 
 def test_naming_template_applied(monkeypatch, tmp_path, make_record):

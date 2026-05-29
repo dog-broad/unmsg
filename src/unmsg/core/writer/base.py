@@ -8,12 +8,22 @@ platform default — so bytes match across machines.
 
 from __future__ import annotations
 
+import base64
 import html as _html
+import mimetypes
 from dataclasses import dataclass
 from datetime import datetime
 from typing import ClassVar, Protocol, runtime_checkable
 
 from unmsg.core.models import MsgRecord
+
+
+class WriterUnavailable(RuntimeError):
+    """Raised when a format's optional dependency isn't installed.
+
+    The message is user-facing; the pipeline surfaces it as a per-format warning
+    rather than failing the whole conversion.
+    """
 
 
 @dataclass(slots=True, frozen=True)
@@ -81,6 +91,18 @@ def meta_rows(record: MsgRecord) -> list[tuple[str, str]]:
     if record.sent_on:
         rows.append(("Date", _iso(record.sent_on)))
     return rows
+
+
+def inline_assets(document: str, assets: dict[str, bytes]) -> str:
+    """Replace relative ``src="<relpath>"`` references with ``data:`` URIs."""
+    for relpath, data in assets.items():
+        mime = mimetypes.guess_type(relpath)[0] or "application/octet-stream"
+        uri = f"data:{mime};base64,{base64.b64encode(data).decode('ascii')}"
+        for quote in ('"', "'"):
+            document = document.replace(
+                f"src={quote}{relpath}{quote}", f"src={quote}{uri}{quote}"
+            )
+    return document
 
 
 def build_html_document(record: MsgRecord, body: str) -> str:
