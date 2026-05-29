@@ -1,0 +1,9 @@
+# Normalise line endings: text is LF in the repo, checked out native on Windows.
+* text=auto eol=lf
+
+# Binary fixtures and assets must never be line-ending munged.
+*.msg binary
+*.png binary
+*.jpg binary
+*.pdf binary
+*.xlsx binary
