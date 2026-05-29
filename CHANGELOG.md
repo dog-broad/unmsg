@@ -6,6 +6,17 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.7]
+
+More colour, used meaningfully.
+
+### Added
+
+- Each file row's status line is now coloured by state — green when done, amber
+  for a warning, red for a failure, accent while converting — matching its dot.
+- A small brand mark and an accent strip in the header, and an accent-coloured
+  heading on the empty-state drop zone.
+
 ## [0.5.6]
 
 A clean restyle to a Tailwind-like look, with colored format badges.
@@ -247,7 +258,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/dog-broad/unmsg/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/dog-broad/unmsg/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/dog-broad/unmsg/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/dog-broad/unmsg/compare/v0.5.3...v0.5.4
