@@ -198,3 +198,44 @@ def test_smime_signed_detected(monkeypatch, tmp_path):
     _patch(monkeypatch, lambda p: FakeMessage(p, classType="IPM.Note.SMIME"))
     record = read_msg(src)
     assert record.is_signed
+
+
+def test_trailing_nulls_are_stripped(monkeypatch, tmp_path):
+    src = tmp_path / "m.msg"
+    src.write_bytes(b"x")
+    att = FakeAttachment(
+        data=b"PNG",
+        longFilename="image001.png\x00",
+        cid="image001@x\x00",
+        mimetype="image/png",
+    )
+    _patch(
+        monkeypatch, lambda p: FakeMessage(p, subject="Hello\x00", attachments=[att])
+    )
+    record = read_msg(src)
+    assert record.subject == "Hello"
+    assert record.attachments[0].name == "image001.png"
+    assert record.attachments[0].cid == "image001@x"
+
+
+def test_rfc2822_date_string_parsed_to_utc(monkeypatch, tmp_path):
+    src = tmp_path / "m.msg"
+    src.write_bytes(b"x")
+    _patch(
+        monkeypatch, lambda p: FakeMessage(p, date="Wed, 13 May 2026 01:02:16 +0530")
+    )
+    record = read_msg(src)
+    assert record.sent_on is not None
+    assert record.sent_on.strftime("%Y-%m-%dT%H:%M:%SZ") == "2026-05-12T19:32:16Z"
+
+
+def test_recipients_split_is_quote_aware(monkeypatch, tmp_path):
+    src = tmp_path / "m.msg"
+    src.write_bytes(b"x")
+    raw = '"Jain; Prinse (Cognizant)" <p@x.com>; "Thakur, Ritu (Cognizant)" <r@x.com>'
+    _patch(monkeypatch, lambda p: FakeMessage(p, to=raw))
+    record = read_msg(src)
+    assert record.to == [
+        '"Jain; Prinse (Cognizant)" <p@x.com>',
+        '"Thakur, Ritu (Cognizant)" <r@x.com>',
+    ]

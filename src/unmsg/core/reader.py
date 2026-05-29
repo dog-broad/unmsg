@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import contextlib
 from datetime import UTC, datetime
-from email.utils import parseaddr
+from email.utils import parseaddr, parsedate_to_datetime
 from pathlib import Path
 from typing import Any
 
@@ -150,6 +150,10 @@ def _is_signed(message: Any) -> bool:
 
 
 def _to_utc(value: object) -> datetime | None:
+    # extract-msg may hand back a datetime or an RFC-2822 string ("Wed, 13 May
+    # 2026 01:02:16 +0530"); accept both.
+    if isinstance(value, str):
+        value = _parse_date(value)
     if not isinstance(value, datetime):
         return None
     if value.tzinfo is None:
@@ -157,12 +161,35 @@ def _to_utc(value: object) -> datetime | None:
     return value.astimezone(UTC)
 
 
-def _split_addresses(value: object) -> list[str]:
-    text = _text(value)
+def _parse_date(text: str) -> datetime | None:
+    text = text.strip()
     if not text:
-        return []
-    parts = (p.strip() for chunk in text.split(";") for p in chunk.split(","))
-    return [p for p in parts if p]
+        return None
+    try:
+        return parsedate_to_datetime(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def _split_addresses(value: object) -> list[str]:
+    # Quote-aware split: separators (';' ',' newline) only count outside double
+    # quotes, because a display name like "Jain, Prinse (Cognizant)" carries the
+    # separator character inside the quoted name.
+    text = _text(value)
+    parts: list[str] = []
+    buffer: list[str] = []
+    in_quotes = False
+    for char in text:
+        if char == '"':
+            in_quotes = not in_quotes
+            buffer.append(char)
+        elif char in ";,\r\n" and not in_quotes:
+            parts.append("".join(buffer))
+            buffer = []
+        else:
+            buffer.append(char)
+    parts.append("".join(buffer))
+    return [part.strip() for part in parts if part.strip()]
 
 
 def _text(value: object) -> str:
@@ -170,22 +197,28 @@ def _text(value: object) -> str:
         return ""
     if isinstance(value, bytes):
         return _decode(value)
-    return str(value)
+    return _strip_nulls(str(value))
 
 
 def _decode(value: object) -> str:
     if value is None:
         return ""
     if isinstance(value, str):
-        return value
+        return _strip_nulls(value)
     if isinstance(value, bytes):
         for encoding in ("utf-8", "cp1252", "latin-1"):
             try:
-                return value.decode(encoding)
+                return _strip_nulls(value.decode(encoding))
             except UnicodeDecodeError:
                 continue
-        return value.decode("utf-8", errors="replace")
-    return str(value)
+        return _strip_nulls(value.decode("utf-8", errors="replace"))
+    return _strip_nulls(str(value))
+
+
+def _strip_nulls(text: str) -> str:
+    # MSG string streams often carry a trailing NUL; a NUL anywhere in a name
+    # would also crash any file write. Remove them everywhere.
+    return text.replace("\x00", "")
 
 
 def _safe_close(message: Any) -> None:
