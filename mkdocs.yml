@@ -39,6 +39,7 @@ nav:
   - Command line: cli.md
   - Desktop app: gui.md
   - Privacy: privacy.md
+  - Build from source: build-from-source.md
   - API reference: api.md
   - Changelog: changelog.md
 

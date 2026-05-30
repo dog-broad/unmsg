@@ -18,6 +18,9 @@ use it.
 
     Releases are currently **unsigned**, so SmartScreen shows a warning the
     first time. Click **More info → Run anyway**. (Code signing is planned.)
+    Don't want to click past the warning? You can
+    [build the installer yourself](build-from-source.md) — the source on
+    GitHub produces the same bytes as the published installer.
 
 === "Python package (CLI + API)"
 
