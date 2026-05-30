@@ -28,6 +28,9 @@ htmlcov/
 *.spec.bak
 installer/**/output/
 
+# Docs build output
+site/
+
 # OS / editor
 .DS_Store
 Thumbs.db

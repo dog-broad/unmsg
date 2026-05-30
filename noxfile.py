@@ -33,5 +33,13 @@ def imports(session: nox.Session) -> None:
 
 @nox.session(python=PYTHONS)
 def tests(session: nox.Session) -> None:
-    session.install("-e", ".[dev]")
-    session.run("pytest", "--cov", "--cov-report=term-missing")
+    session.install("-e", ".[gui,pdf,dev]")
+    session.env["QT_QPA_PLATFORM"] = "offscreen"
+    session.run("pytest", "--cov=unmsg", "--cov-report=term-missing")
+
+
+@nox.session
+def docs(session: nox.Session) -> None:
+    """Build the documentation site (mirrors the CI docs job)."""
+    session.install("-e", ".[docs]")
+    session.run("mkdocs", "build", "--strict")

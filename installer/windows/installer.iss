@@ -4,7 +4,9 @@
 ; Keep MyAppVersion in step with src/unmsg/_version.py.
 
 #define MyAppName "UnMsg"
-#define MyAppVersion "0.3.0"
+#ifndef MyAppVersion
+  #define MyAppVersion "0.0.0-local"
+#endif
 #define MyAppExe "UnMsg.exe"
 
 [Setup]
