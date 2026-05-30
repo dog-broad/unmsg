@@ -27,7 +27,7 @@ def read_msg(path: Path | str) -> MsgRecord:
     src = Path(path)
     if not src.exists():
         raise FileNotFoundError(src)
-    message = extract_msg.Message(str(src))
+    message = extract_msg.Message(str(src))  # type: ignore[no-untyped-call,unused-ignore]
     try:
         return _record_from_message(message, src, depth=0)
     finally:

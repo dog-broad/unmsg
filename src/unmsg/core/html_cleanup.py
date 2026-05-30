@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup, Comment, Tag
 
 _DROP_TAGS = ("script", "style", "meta", "link", "o:p")
 _EVENT_ATTR = re.compile(r"^on", re.IGNORECASE)
@@ -29,6 +29,8 @@ def clean_html(html: str) -> str:
         tag.decompose()
 
     for tag in soup.find_all(True):
+        if not isinstance(tag, Tag):
+            continue
         for attr in list(tag.attrs):
             if _EVENT_ATTR.match(attr):
                 del tag[attr]
@@ -52,6 +54,8 @@ def strip_presentation(html: str) -> str:
         return ""
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup.find_all(True):
+        if not isinstance(tag, Tag):
+            continue
         for attr in _PRESENTATION_ATTRS:
             if attr in tag.attrs:
                 del tag[attr]
