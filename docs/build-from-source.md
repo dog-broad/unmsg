@@ -76,7 +76,10 @@ $ver = (python -c "from unmsg._version import __version__; print(__version__)").
     /DMyAppVersion=$ver installer\windows\installer.iss
 ```
 
-The installer lands at `dist\installer\UnMsg-Setup-<version>.exe`.
+The installer lands at `dist\installer\UnMsg-Setup-<version>.exe`. Source
+paths in `installer.iss` are anchored to the repo root with `SourceDir=..\..`,
+so you can run `iscc` from anywhere on disk and the build still resolves
+correctly.
 
 ### Verify your installer matches the release
 

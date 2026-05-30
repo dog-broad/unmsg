@@ -6,6 +6,17 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.1]
+
+### Fixed
+
+- Windows installer build failed in CI because Inno Setup resolved relative
+  source paths against the `.iss` file's directory rather than the repo root.
+  The script now anchors at the repo root via `SourceDir=..\..`, so the
+  setup `.exe` builds correctly under GitHub Actions and locally from any
+  working directory. (v0.6.0's tag exists but its release workflow couldn't
+  publish artifacts; v0.6.1 is the first GitHub Release in the 0.6 line.)
+
 ## [0.6.0]
 
 The 1.0 polish step: the public Python API is now formally stable, the
@@ -321,7 +332,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/dog-broad/unmsg/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/dog-broad/unmsg/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/dog-broad/unmsg/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/dog-broad/unmsg/compare/v0.5.7...v0.5.8

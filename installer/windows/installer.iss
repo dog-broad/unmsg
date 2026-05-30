@@ -1,6 +1,7 @@
 ; Inno Setup script for the UnMsg Windows installer.
-; Build the app first (see pyinstaller.spec), then compile from the repo root:
+; Build the app first (see pyinstaller.spec), then compile (from anywhere):
 ;     iscc installer/windows/installer.iss
+; All source paths below are anchored to the repo root via SourceDir.
 ; Keep MyAppVersion in step with src/unmsg/_version.py.
 
 #define MyAppName "UnMsg"
@@ -10,6 +11,7 @@
 #define MyAppExe "UnMsg.exe"
 
 [Setup]
+SourceDir=..\..
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher=UnMsg
