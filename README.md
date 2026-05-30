@@ -1,5 +1,10 @@
 # UnMsg
 
+[![CI](https://github.com/dog-broad/unmsg/actions/workflows/ci.yml/badge.svg)](https://github.com/dog-broad/unmsg/actions/workflows/ci.yml)
+[![Docs](https://github.com/dog-broad/unmsg/actions/workflows/docs.yml/badge.svg)](https://dog-broad.github.io/unmsg/)
+[![PyPI](https://img.shields.io/pypi/v/unmsg.svg)](https://pypi.org/project/unmsg/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 > Turn Outlook `.msg` files into clean Markdown, HTML, text, JSON, EML, and PDF —
 > with attachments and inline images extracted alongside. Drag, drop, click
 > Convert, done.
@@ -17,8 +22,17 @@ is the thing you can install in two minutes and use forever.
 
 ## Status
 
-Early development. The first milestone is a working conversion engine and a
-minimal command line; a polished desktop app follows. Watch this space.
+Pre‑1.0 release line. The conversion core, CLI, and desktop app are all
+shipped — current release is on the
+[releases page](https://github.com/dog-broad/unmsg/releases). 1.0 will add a
+code‑signed Windows installer and best‑effort macOS/Linux artifacts.
+
+## Documentation
+
+Full docs — getting started, CLI reference, desktop app guide, the privacy
+statement, and the auto‑generated API reference — live at
+**[dog-broad.github.io/unmsg](https://dog-broad.github.io/unmsg/)** (built
+from [`docs/`](docs/)).
 
 ## Planned features
 
