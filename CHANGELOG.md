@@ -6,6 +6,49 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0]
+
+The 1.0 polish step: the public Python API is now formally stable, the
+project ships with a documentation site, every check runs in CI on three
+operating systems, and the desktop app, CLI, and core engine are all backed
+by ≥ 90% test coverage. The Windows installer is still unsigned for one
+more release — see *Build from source* in the docs if you'd rather build
+it yourself.
+
+### Added
+
+- **Public Python API stability** (effective from 1.0). The seven names in
+  `unmsg.__all__` — `convert_file`, `convert_batch`, `ConvertOptions`,
+  `ConvertResult`, `MsgRecord`, `Attachment`, `__version__` — keep their
+  identities and shapes across `1.x`. Data‑model dataclasses gain new
+  *optional* fields only; `convert_file` and `convert_batch` keep their
+  existing keyword arguments. A contract test pins the surface so changes
+  can't slip in unnoticed.
+- **Documentation site** at `docs/`, built with mkdocs‑material and
+  mkdocstrings: home, getting started, CLI reference, desktop app guide,
+  the privacy statement, an auto‑generated API reference, *Build from
+  source*, and the changelog. Builds clean under `mkdocs build --strict`.
+- **CONTRIBUTING.md** with the dev set‑up, the local check‑list, and the
+  code/commit conventions.
+- **Continuous integration** via GitHub Actions: lint, strict type‑checks
+  on the core, import contracts, the test suite, and the coverage floor —
+  all run on Ubuntu, Windows, and macOS for Python 3.11 and 3.12 on every
+  push and PR. A separate workflow deploys the docs to GitHub Pages from
+  `main`; a third builds the wheel, sdist, and Windows installer on tag
+  releases and attaches them to the GitHub Release.
+- **Reproducible Windows installer** — the Inno Setup version is set from
+  the package version at build time, and the installer's version flows
+  through the workflow so any tagged release produces a correctly stamped
+  setup `.exe`.
+
+### Changed
+
+- Test coverage lifted from 83% to 92%; the project enforces a 90% floor.
+- The Nox `tests` session installs the GUI and PDF extras so the desktop
+  tests actually run locally, matching what CI runs.
+- README now points at the docs site and shows CI/Docs/PyPI/License
+  badges.
+
 ## [0.5.9]
 
 ### Added
@@ -278,7 +321,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.5.9...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/dog-broad/unmsg/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/dog-broad/unmsg/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/dog-broad/unmsg/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/dog-broad/unmsg/compare/v0.5.6...v0.5.7

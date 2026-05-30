@@ -22,10 +22,13 @@ is the thing you can install in two minutes and use forever.
 
 ## Status
 
-Pre‑1.0 release line. The conversion core, CLI, and desktop app are all
-shipped — current release is on the
-[releases page](https://github.com/dog-broad/unmsg/releases). 1.0 will add a
-code‑signed Windows installer and best‑effort macOS/Linux artifacts.
+**v0.6.0 — the 1.0 polish step.** The public Python API is now stable, the
+project has a documentation site, CI runs on Ubuntu/Windows/macOS, and the
+test suite covers ≥ 90% of the code. The Windows installer is still
+**unsigned** for one more release — SmartScreen will warn on first run; if
+you'd rather not click past that, the docs explain how to
+[build the installer yourself](https://dog-broad.github.io/unmsg/build-from-source/).
+**v1.0.0** ships when the installer is code‑signed.
 
 ## Documentation
 
