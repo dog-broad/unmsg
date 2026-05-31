@@ -6,6 +6,25 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.2]
+
+### Added
+
+- The release workflow now publishes the wheel and sdist to PyPI on every tag
+  push, via PyPI's OIDC Trusted Publishers (no API tokens stored in the repo).
+  This is the first UnMsg release on PyPI; `pip install unmsg` works from here.
+
+### Fixed
+
+- `pytest-qt` is now a declared dev dependency, so a fresh CI / Nox install
+  picks up the `qtbot` fixture and runs the desktop tests end‑to‑end.
+- The CI test matrix installs `libcairo2-dev` on Linux and `cairo` on macOS so
+  the `pdf` extra's transitive `pycairo` dependency can build when no wheel
+  matches.
+- Strict mypy on the conversion core now narrows BeautifulSoup4's result-set
+  union to `Tag` before touching `.attrs`, fixing eight type errors that
+  newer bs4 type hints surfaced.
+
 ## [0.6.1]
 
 ### Fixed
@@ -332,7 +351,8 @@ Everything runs locally — nothing is ever sent anywhere.
 - `pip install unmsg` installs the core and CLI only. The GUI will be available
   as an optional `unmsg[gui]` extra.
 
-[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/dog-broad/unmsg/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/dog-broad/unmsg/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/dog-broad/unmsg/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/dog-broad/unmsg/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/dog-broad/unmsg/compare/v0.5.8...v0.5.9
