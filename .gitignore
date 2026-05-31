@@ -22,6 +22,7 @@ env/
 .nox/
 .coverage
 .coverage.*
+coverage.xml
 htmlcov/
 
 # Packaging / bundling output
